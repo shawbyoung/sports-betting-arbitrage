@@ -8,14 +8,13 @@ The following kinds of bets:
 And seeks to bet on purely pure arbitrage.
 '''
 
-
 class const:
 	def books() -> list[str]:
 		return [
 			"draftkings"
 		]
 
-class Pure_Arbitrage_Engine:
+class engine:
 	def __init__(self):
 		pass
 
@@ -36,6 +35,3 @@ class Pure_Arbitrage_Engine:
 		pass
 		# while (self.can_continue_betting()):
 		# 	bet_data =
-
-
-	

@@ -4,7 +4,7 @@ from logger import logger
 
 class draftkings:
     # tested with just nfl for now
-    def get_odds(category: str):
+    def get_odds(category: str) -> :
         response = requests.get(f"https://sportsbook.draftkings.com/leagues/football/{category}")
         
         if response.status_code != 200:
@@ -14,7 +14,7 @@ class draftkings:
         f = open(f"draftkings{category}", "w")
         f.write(response.text)
         f.close()
-
+    
 # TODO: delete below, this is for testing
 
 # draftkings.get_odds("nfl")
