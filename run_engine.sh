@@ -1,0 +1,1 @@
+python3 -O main.py

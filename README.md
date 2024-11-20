@@ -4,9 +4,11 @@
 
 1. I think we'll want to write our own APIs for different sports. 
 Let's keep our scope small and stick to 2-3 sportsbooks to begin with.
-We can do this with the request library. We can consider using JS for 
-latency. Unlikely for that to be super useful though.
-We can asynchronously call the api for each book to improve latency.
+We can do this with the request library. Consider using JS for 
+latency? actually have no clue about that shit. i mean we could always do c++ 
+but that seems lowkey ridiculous. our bottleneck isn't api anyways.
+
+We should asynchronously call the api for each book to improve latency.
 
 TODO: 
  - buildout api for draftkings

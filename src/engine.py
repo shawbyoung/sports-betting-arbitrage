@@ -7,21 +7,19 @@ The following kinds of bets:
 	- head to head
 And seeks to bet on purely pure arbitrage.
 '''
-
-class const:
-	def books() -> list[str]:
-		return [
-			"draftkings"
-		]
+from sportsbook_apis import *
+import sportsbook_apis
+import json
 
 class engine:
 	def __init__(self):
-		pass
-
-	def initialize_engine(self) -> None:
+  		# reads .config file to login and shit.
+		with open('.config', 'r') as config_file: config_text = config_file.read()
+		config = json.loads(config_text)
+		self.books: list[str] = config["books"]
+		self.categories: list[str] = config["categories"]
 		# initialize current balances across accounts to measure when to stop betting.
 		# opens windows in selenium
-		pass
 
 	def can_continue_betting(self) -> None:
 		# some criteria for
@@ -31,7 +29,17 @@ class engine:
 		# 
 		pass
 
+	def request_odds(self):
+		for sportsbook in self.books:
+			# Given a module foo with method bar:
+			bar = getattr(sportsbook_apis, 'bar')
+			result = bar()
+
 	def run(self):
-		pass
 		# while (self.can_continue_betting()):
-		# 	bet_data =
+		sportbook_odds = self.request
+		pass
+		
+
+	# def get_most_polarizing_odds(team_1):
+    #  	pass
