@@ -1,5 +1,8 @@
-from src.engine import pure_arbitrage_engine
+from engine import engine
 
 def main():
-	engine = pure_arbitrage_engine()
+	engine.initialize()
 	engine.run()
+
+if __name__ == "__main__":
+	main()

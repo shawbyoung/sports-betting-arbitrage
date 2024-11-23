@@ -24,3 +24,13 @@ store account information carefully, gitignore type shit. Execution will likely 
 We can look into ways to improve latency later.
 
 
+'''
+This engine supports the following sportsbooks:
+	- draftkings
+The following betting sports/betting categories:  
+	- NFL
+The following kinds of bets:
+	- head to head
+And seeks to bet on purely pure arbitrage.
+'''
+
