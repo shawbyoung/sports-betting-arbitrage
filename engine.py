@@ -21,9 +21,9 @@ class engine:
 		logger.log(f"Betting on the following sportsbooks: {list(engine.sportsbooks.keys())}")		
 	
 	def initialize_sportsbook_apis() -> None:
-		engine.sportsbook_apis = [getattr(apis, sportsbook) for sportsbook in engine.sportsbooks.keys()]
-		for api in engine.sportsbook_apis:
-			api.categories = engine.categories
+		sportsbooks = [getattr(apis, sportsbook) for sportsbook in engine.sportsbooks.keys()]
+		for sportsbook in sportsbooks:
+			engine.sportsbook_apis.append(sportsbook(engine.categories))
     	# initialize current balances across accounts to measure when to stop betting.
 		# opens windows in selenium
 

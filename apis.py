@@ -1,84 +1,80 @@
 # Right now the draftkings api just get nfl odds, lets push to mvp quickly. 
 import json
 import requests
+import util
+
 from bs4 import BeautifulSoup
 from logger import logger
-# from sportsbook_api import sportsbook_api
-# TODO: move 'get page functionality' into superclass. 
-
-'''
-> football
-> nfl
-> moneyline ?
-'''
-
-def convert_odds_to_decimal(american_odds: int) -> float:
-    return (american_odds / 100) + 1
-
-def convert_odds_to_decimal(american_odds: int) -> float:
-    return (american_odds / 100) + 1
-
-class h2h:
-    def __init__(self, sportsbook: str, category: str, promotion: str, team_1_name: str, team_2_name: str, team_1_odds: float, team_2_odds: float):
-        self.sportsbook: str = sportsbook 
-        self.category: str = category
-        self.promotion: str = promotion
-        self.team_1_name: str = team_1_name
-        self.team_2_name: str = team_2_name
-        self.team_1_odds: float = team_1_odds
-        self.team_2_odds: float = team_2_odds
 
 class api:
-    pass
-    # name = ""
-    # categories = {}
+    def __init__(self, name: str, categories):
+        self.name = name
+        self.categories = categories
     
-    # def __get_stubbed_page(category: str, promotion: str) -> str:
-    #     stub = open(f"stubs/{api.name}-{category}-{promotion}", "r")
-    #     return stub.read()
+    # Subclasses must implement.
+    def _get_base_url(self):
+        return ""
     
-    # def __get_live_page(category: str, promotion: str) -> str:
-    #     response = requests.get(f"{draftkings.__get_base_url()}/{category}/{promotion}")
-        
-    #     if response.status_code != 200:
-    #         logger.log_error("Request to draftkings failed.")
-    #         exit(1)
-        
-    #     stub = open(f"{draftkings.name}-{category}", "w")
-    #     # TODO: consider latency here eventually.
-    #     stub.write(response.text)
-    #     return response.text
-
-class draftkings:
-    name = "draftkings"
-    categories = {}
-
-    def __get_base_url() -> str:
-        return "https://sportsbook.draftkings.com/leagues/"
-
-    def __get_stubbed_page(category: str, promotion: str) -> str:
-        stub = open(f"stubs/{draftkings.name}-{category}-{promotion}", "r")
+    def _get_stubbed_page(self, category: str, promotion: str) -> str:
+        stub = open(f"stubs/{self.name}-{category}-{promotion}", "r")
         return stub.read()
-
-    def __get_live_page(category: str, promotion: str) -> str:
-        response = requests.get(f"{draftkings.__get_base_url()}/{category}/{promotion}")
+    
+    def _url_disambiguator(self, category: str, promotion: str) -> str:
+        return ""
+        
+    def _get_live_page(self, category: str, promotion: str) -> str:
+        url = self._url_disambiguator(category, promotion)
+        logger.log(f"Requesting {self.name} for {category}/{promotion}.")
+        response = requests.get(url)
         
         if response.status_code != 200:
-            logger.log_error("Request to draftkings failed.")
+            logger.log_error(f"Request to {self.name} failed. Tried {url}")
             exit(1)
-        
-        stub = open(f"{draftkings.name}-{category}", "w")
-        # TODO: consider latency here eventually.
+
+        stub = open(f"stubs/{self.name}-{category}-{promotion}", "w")
+        # TODO: consider latency here eventually. perhaps add a setting in config
+        # that turns on writing to file and make async.
         stub.write(response.text)
         return response.text
 
-    def __get_page(category: str, promotion: str) -> None:
-        return draftkings.__get_live_page(category, promotion) if not __debug__ else draftkings.__get_stubbed_page(category, promotion)
+    def _get_page(self, category: str, promotion: str) -> None:
+        return self._get_live_page(category, promotion) if not __debug__ else self._get_stubbed_page(category, promotion)
+
+    # Subclasses must implement.
+    def _process_page(self, page: str) -> json:                            
+        return []
     
-    def __get_team_information(team):
+    def get_odds(self) -> None:
+        odds = []
+        for category, promotions in self.categories.items():
+            for promotion in promotions:
+                page = self._get_page(category, promotion)
+                odds += self._process_page(page)
+        return odds
+
+class draftkings(api):
+    def __init__(self, categories):
+        super().__init__("draftkings", categories)
+
+    def _get_base_url(self) -> str:
+        return "https://sportsbook.draftkings.com/leagues/"
+
+    def _get_stubbed_page(self, category: str, promotion: str) -> str:
+        return super()._get_stubbed_page(category, promotion)
+
+    def _url_disambiguator(self, category: str, promotion: str) -> str:
+        return f"{self._get_base_url()}/{category}/{promotion}"
+
+    def _get_live_page(self, category: str, promotion: str) -> str:
+        return super()._get_live_page(category, promotion)
+
+    def _get_page(self, category: str, promotion: str) -> None:
+        return super()._get_page(category, promotion)
+    
+    def _get_team_information(self, team):
         team_name_div = team.find("th", class_ = "sportsbook-table__column-row").find("div", class_ = "event-cell__name-text")
         team_name = team_name_div.get_text()                
-        '''
+        '''`
         odds[0] corresponds to spread.
         odds[1] corresponds to total.
         '''
@@ -88,11 +84,11 @@ class draftkings:
         moneyline_odds_div = odds[2].find("span", class_ = "sportsbook-odds")
         moneyline_odds_text = moneyline_odds_div.get_text()
 
-        return team_name, convert_odds_to_decimal(int(moneyline_odds_text[1:]))
+        return team_name, util.convert_odds_to_decimal(int(moneyline_odds_text[1:]))
 
-    def __get_game_odds(team_1, team_2):
-        team_1_name, team_1_moneyline_odds = draftkings.__get_team_information(team_1)
-        team_2_name, team_2_moneyline_odds = draftkings.__get_team_information(team_2)
+    def _get_game_odds(self, team_1, team_2):
+        team_1_name, team_1_moneyline_odds = self._get_team_information(team_1)
+        team_2_name, team_2_moneyline_odds = self._get_team_information(team_2)
         
         return {
             "team_1_name" : team_1_name, 
@@ -101,7 +97,7 @@ class draftkings:
             "team_2_moneyline_odds" : team_2_moneyline_odds
         }
     
-    def __process_page(page: str) -> json:
+    def _process_page(self, page: str) -> json:
         soup = BeautifulSoup(page, 'html.parser')
         sportsbook_tables = soup.find_all('tbody', class_ = 'sportsbook-table__body')
 
@@ -119,19 +115,89 @@ class draftkings:
                 games.append((rows[i], rows[i+1]))
 
             for team_1, team_2 in games:
-                game_odds = draftkings.__get_game_odds(team_1, team_2)
+                game_odds = self._get_game_odds(team_1, team_2)
                 print(game_odds, '\n')
                             
         return []
     
-    def get_odds() -> None:
-        odds = []
-        for category, promotions in draftkings.categories.items():
-            for promotion in promotions:
-                page = draftkings.__get_page(category, promotion)
-                odds += draftkings.__process_page(page)
-        return odds
+    def get_odds(self) -> None:
+        return super().get_odds()
 
-# TODO: delete below, this is for testing
+class betrivers(api):
+    def __init__(self, categories):
+        super().__init__("betrivers", categories)
 
-# draftkings.get_odds("nfl")
+    def _get_base_url(self) -> str:
+        return "https://va.betrivers.com/"
+
+    def _get_stubbed_page(self, category: str, promotion: str) -> str:
+        return super()._get_stubbed_page(category, promotion)
+
+    def _url_disambiguator(self, category: str, promotion: str):
+        match category:
+            case "football":
+                match promotion:
+                    case "nfl":
+                        # Try to make sense of the urls later if/when we expand
+                        return f"{self._get_base_url()}?page=sportsbook&group=1000093656&type=matches#home"
+                    case _:
+                        return ""
+            case _:
+                return ""
+                            
+    def _get_live_page(self, category: str, promotion: str) -> str:
+        return super()._get_live_page(category, promotion)
+
+    def _get_page(self, category: str, promotion: str) -> None:
+        return super()._get_page(category, promotion)
+    
+    def _get_team_information(self, team):
+        team_name_div = team.find("th", class_ = "sportsbook-table__column-row").find("div", class_ = "event-cell__name-text")
+        team_name = team_name_div.get_text()                
+        '''
+        odds[0] corresponds to spread.
+        odds[1] corresponds to total.
+        '''
+        odds = team.find_all("td", class_ = "sportsbook-table__column-row")
+        assert len(odds) == 3, "Draftkings has three markets: spread, total, and moneyline." 
+        moneyline_odds_div = odds[2].find("span", class_ = "sportsbook-odds")
+        moneyline_odds_text = moneyline_odds_div.get_text()
+
+        return team_name, util.convert_odds_to_decimal(int(moneyline_odds_text[1:]))
+
+    def _get_game_odds(self, team_1, team_2):
+        team_1_name, team_1_moneyline_odds = self._get_team_information(team_1)
+        team_2_name, team_2_moneyline_odds = self._get_team_information(team_2)
+        
+        return {
+            "team_1_name" : team_1_name, 
+            "team_2_name" : team_2_name,
+            "team_1_moneyline_odds" : team_1_moneyline_odds,
+            "team_2_moneyline_odds" : team_2_moneyline_odds
+        }
+    
+    def _process_page(self, page: str) -> json:
+        soup = BeautifulSoup(page, 'html.parser')
+        sportsbook_tables = soup.find_all('tbody', class_ = 'sportsbook-table__body')
+
+        if not sportsbook_tables:
+            return []
+
+        # Game odds are two tr elements separated by breaklines
+        for sportsbook_table in sportsbook_tables:
+            rows = sportsbook_table.find_all("tr", recursive=False)
+            games = []
+            n_rows = len(rows)
+
+            # You're given pairs
+            for i in range(0, n_rows, 2):
+                games.append((rows[i], rows[i+1]))
+
+            for team_1, team_2 in games:
+                game_odds = self._get_game_odds(team_1, team_2)
+                print(game_odds, '\n')
+                            
+        return []
+    
+    def get_odds(self) -> None:
+        return super().get_odds()
