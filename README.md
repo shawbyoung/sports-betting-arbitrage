@@ -23,7 +23,6 @@ We should look into different benchmarking python libraries.
 store account information carefully, gitignore type shit. Execution will likely be a bottleneck.
 We can look into ways to improve latency later.
 
-
 '''
 This engine supports the following sportsbooks:
 	- draftkings
@@ -34,3 +33,25 @@ The following kinds of bets:
 And seeks to bet on purely pure arbitrage.
 '''
 
+Sports book selection
+ - draftkings 
+	- has been unfussy about requests and response is consistent w what you
+ 	  see in browser
+ - betus 
+	- browser shows no odds?
+ - fanduel
+	- i rec
+ - bet365 
+	- requests seem to fail
+ - caesars 
+	- does not have desktop website... lame
+	- we could maybe find endpoints w android emulator or smth?
+	- but is it worth the trouble? def not for early game
+ - betriver
+	- response seems to differ from what i see on browser. not sportsbook info,
+	  seems to force authentification. which is fine tbh, with selenium. just 
+	  changes design a tad that can be dealt w 
+ - betmgm
+	- i vaguely remember requests failing (?) verify
+ - hardrock
+	- desktop link hard to find tf
