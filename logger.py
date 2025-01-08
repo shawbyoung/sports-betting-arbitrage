@@ -1,13 +1,21 @@
+import threading
+
 class logger:
     level = 1
-    
+    lock = threading.Lock()
+
     def log(level: int, message: str):
-        # implement level logging to avoid to much io.
-        if logger.level >= level:
+        if logger.level < level:
+            return
+        with logger.lock:
             print(f"LOG: {message}")
     
     def log(message: str):
-        print(f"LOG: {message}")
+        with logger.lock:
+            print(f"LOG: {message}")
 
+    def log_warning(message: str):
+        print(f"WARNING: {message}")
+        
     def log_error(message: str):
         print(f"ERROR: {message}")

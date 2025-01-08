@@ -1,8 +1,7 @@
 from engine import engine
 
 def main():
-	engine.initialize()
-	engine.run()
+    engine()
 
-if __name__ == "__main__":
-	main()
+if __name__ == '__main__':
+    main()

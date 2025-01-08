@@ -1,57 +1,33 @@
-import json
+import asyncio
+from bet365 import bet365
+from betmgm import betmgm
 from logger import logger
-import apis 
+from itertools import chain
 
 class engine:
-	sportsbooks: dict[str, dict] = {}
-	sportsbook_apis: list = []
-	categories: dict[str, list[str]] = {}
- 
-	def initialize():
-		logger.log(f"Initializing betting engine.")
-		with open('.config', 'r') as config_file: config_text = config_file.read()
-		config = json.loads(config_text)
+	def __init__(self):
+		promotions = ['nba']
+		sportsbooks = [betmgm(), bet365()]
+		asyncio.run(engine.login(sportsbooks))
+		asyncio.run(engine.bet(sportsbooks, promotions))
+		asyncio.run(engine.epilogue(sportsbooks))
 
-		engine.categories = config["categories"]  
-		for category in engine.categories:
-			logger.log(f"Betting on {category} with promotions {engine.categories[category]}")   			
+	async def login(sportsbooks):
+		coros = [sportsbook.login() for sportsbook in sportsbooks]
+		results = await asyncio.gather(*coros)
 
-		engine.sportsbooks = config["sportsbooks"]
-		engine.initialize_sportsbook_apis()
-		logger.log(f"Betting on the following sportsbooks: {list(engine.sportsbooks.keys())}")		
-	
-	def initialize_sportsbook_apis() -> None:
-		sportsbooks = [getattr(apis, sportsbook) for sportsbook in engine.sportsbooks.keys()]
+	async def bet(sportsbooks, promotions):
+		logger.log('Finding polarizing odds.')
+
+		def find_arbitrage(odds):
+			print(odds)
+
+		for i in range(3):
+			logger.log(f'Iteration {i}.')
+			coros = [sportsbook.collect_odds(promotions) for sportsbook in sportsbooks]
+			odds_nested = await asyncio.gather(*coros)
+			find_arbitrage(list(chain.from_iterable(odds_nested)))
+
+	async def epilogue(sportsbooks):
 		for sportsbook in sportsbooks:
-			engine.sportsbook_apis.append(sportsbook(engine.categories))
-    	# initialize current balances across accounts to measure when to stop betting.
-		# opens windows in selenium
-
-	def can_continue_betting() -> None:
-		# some criteria for
-		pass
-
-	def get_bet_data() -> None:
-		# 
-		pass
-
-	def request_odds():
-		for sportsbook in engine.books:
-			sportsbook_api = getattr(apis, sportsbook)
-			result = sportsbook_api()
-
-	def get_odds_from_all_sportsbooks():
-		# TODO: Make async
-		odds = []
-		for sportsbook_api in engine.sportsbook_apis:
-			odds += sportsbook_api.get_odds()
-		# TODO: dynamically check odds for bet opportunities, refresh odds when bet is found and executed.
-		# will need to check the above for actual wins, GET WORKING FIRST
-		return odds
-
-	def run():
-		odds = engine.get_odds_from_all_sportsbooks()
-				
-
-	# def get_most_polarizing_odds(team_1):
-    #  	pass
+			sportsbook.driver_quit()

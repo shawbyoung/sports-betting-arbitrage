@@ -55,3 +55,6 @@ Sports book selection
 	- i vaguely remember requests failing (?) verify
  - hardrock
 	- desktop link hard to find tf
+
+- checkout overtime markets, cloudbet, sportsbet.io 
+ - crypto sportsbooks
