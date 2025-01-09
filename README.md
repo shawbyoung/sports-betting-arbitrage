@@ -58,3 +58,21 @@ Sports book selection
 
 - checkout overtime markets, cloudbet, sportsbet.io 
  - crypto sportsbooks
+
+
+Traceback (most recent call last):
+  File "/home/shawy/sports-betting-arbitrage/main.py", line 7, in <module>
+    main()
+  File "/home/shawy/sports-betting-arbitrage/main.py", line 4, in main
+    engine()
+  File "/home/shawy/sports-betting-arbitrage/engine.py", line 13, in __init__
+    asyncio.run(engine.bet(sportsbooks, promotions))
+  File "/usr/lib/python3.10/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/home/shawy/sports-betting-arbitrage/engine.py", line 93, in bet
+    engine._find_arbitrage(list(chain.from_iterable(odds_nested)))
+  File "/home/shawy/sports-betting-arbitrage/engine.py", line 26, in _find_arbitrage
+    t1_moneyline_odds, t2_moneyline_odds = odds['t1_moneyline_odds'], odds['t2_moneyline_odds']
+KeyError: 't1_moneyline_odds'
