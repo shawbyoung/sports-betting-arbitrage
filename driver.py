@@ -1,12 +1,13 @@
-import asyncio
 import time
 import util
 from itertools import chain
 from logger import logger
+from odds import odds
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+from typing import Callable
 
 class driver:
 	def __init__(self, name):
@@ -15,76 +16,69 @@ class driver:
 		self.driver = webdriver.Firefox()
 		self.promotions = {}
 
-	def driver_quit(self):
+	def driver_quit(self) -> None:
 		logger.log(f'Quitting {self.name} web driver.')
 		self.driver.quit()
 
-	async def _login_aux(self):
+	def _log(self, type: str, message: str, level: int | None) -> None:
+		log = getattr(logger, f'log_{type}', None)
+		assert log, '"log"\'s type should be defined.'
+
+		if level == None:
+			log(f'[{self.name}] {message}')
+			return
+
+		log(f'[{self.name}] {message}', level)
+
+	def _log_promotion(
+     	self, promotion: str, type: str, message: str, level: int | None
+	) -> None:
+		self._log(type, f'[{promotion}] {message}', level)
+
+	def _login_aux(self) -> None:
 		self.driver.get('www.example.com')
 
-	async def login(self):
+	def login(self) -> None:
 		logger.log(f'Logging into {self.name}.')
-		await self._login_aux()
+		self._login_aux()
 		logger.log(f'Logged into {self.name}.')
 
-	async def collect_odds(self, promotions):
-		odds = []
-		requested_promotions = [p for p in self.promotions if p in promotions] 
-		coros = [getattr(self, f'_collect_{p}_odds')() for p in requested_promotions]
-		odds = await asyncio.gather(*coros)
-		return list(chain.from_iterable(odds))
-	
-	def _create_event_odds(self, participants, spread, total, moneyline):
-		total_idx = 1
-		if participants[0] < participants[1]:
-			t1_participants_idx = 0
-			t2_participants_idx = 1
-			t1_spread_idx = 1
-			t2_spread_idx = 3
-			t1_total_idx = 2
-			t2_total_idx = 5
-			t1_moneyline_idx = 0
-			t2_moneyline_idx = 1
-		else:
-			t1_participants_idx = 1
-			t2_participants_idx = 0
-			t1_spread_idx = 3
-			t2_spread_idx = 1
-			t1_total_idx = 5
-			t2_total_idx = 2
-			t1_moneyline_idx = 1
-			t2_moneyline_idx = 0
+	def _get_promotion_link(self, promotion: str):
+		pass 
 
-		t1_name = participants[t1_participants_idx]
-		t2_name = participants[t2_participants_idx]
+	# Gets the appropriate promotion page for `collect_promotion_odds`. 
+	def _get_promotion_page(self, promotion: str):
+		try:
+			self.driver.get(self.promotion_link(promotion))
+		except:
+			self._log_promotion(
+       			promotion, 'error', f'Cannot get {promotion} page from {self.name}.'
+          	)
 
-		event_odds = {
-			'sportsbook' : self.name,
-			't1_name' : t1_name,
-			't2_name' : t2_name
-		}
-
-		if len(spread) == 4:
-			event_odds['t1_spread_odds'] = util.american.to_decimal(spread[t1_spread_idx])
-			event_odds['t2_spread_odds'] = util.american.to_decimal(spread[t2_spread_idx])
-		else:
-			logger.log_warning(f'[{self.name}][NBA] {t1_name}, {t2_name} event has no spread info.')
-
-		if len(total) == 6:
-			event_odds['total_score'] = total[total_idx]
-			event_odds['t1_total_odds'] = util.american.to_decimal(total[t1_total_idx])
-			event_odds['t2_total_odds'] = util.american.to_decimal(total[t2_total_idx])
-		else:
-			logger.log_warning(f'[{self.name}][NBA] {t1_name}, {t2_name} event has no total info.')
-
-		if len(moneyline) == 2:
-			event_odds['t1_moneyline_odds'] = util.american.to_decimal(moneyline[t1_moneyline_idx])
-			event_odds['t2_moneyline_odds'] = util.american.to_decimal(moneyline[t2_moneyline_idx])
-		else:
-			logger.log_warning(f'[{self.name}][NBA] {t1_name}, {t2_name} event has no moneyline info, dropping.')
-			return None
-
-		return event_odds
-
-	async def _collect_nba_odds(self):
+	# Returns elements that represent sports events.
+	def _get_events(self, promotion: str):
 		pass
+
+	# Parses an element and returns odds.
+	def _parse_event(self, event):
+		pass
+
+	# Generic function for collecting odds from a promotion after getting the 
+ 	# appropriate promotion link.
+	def get_odds(self, promotion: str):
+		self._get_promotion_page(promotion)
+		events = self._get_events(promotion)
+		odds = []
+		for event in events:
+			event_odds = self._parse_event(promotion, event)
+			if event_odds:
+				odds.append(event_odds)
+
+		return odds
+
+	# async def collect_odds(self, promotions):
+	# 	odds = []
+	# 	requested_promotions = [p for p in self.promotions if p in promotions] 
+	# 	coros = [getattr(self, f'_collect_{p}_odds')() for p in requested_promotions]
+	# 	odds = await asyncio.gather(*coros)
+	# 	return list(chain.from_iterable(odds))

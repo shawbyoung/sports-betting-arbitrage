@@ -1,0 +1,586 @@
+LOG: Initializing MGM web driver.
+LOG: Initializing HardRock web driver.
+LOG: Logging into MGM.
+LOG: Logged into MGM.
+LOG: Logging into HardRock.
+LOG: Logged into HardRock.
+LOG: Entering arbitrage monitoring loop.
+LOG: Loop 0
+WARNING: [MGM][NBA] Pistons, Warriors event has no spread info.
+WARNING: [MGM][NBA] Pistons, Warriors event has no total info.
+LOG: Arbitrage not found. Best odds on Clippers are 11.00(MGM) and 12.00(HardRock).
+LOG: Best odds on Nuggets are 1.04(MGM) and 1.04(MGM).
+LOG: Arbitrage not found. Best odds on Bucks are 1.12(HardRock) and 1.13(MGM).
+LOG: Best odds on Spurs are 5.75(MGM) and 6.50(HardRock).
+LOG: Arbitrage not found. Best odds on Cavaliers are 1.06(MGM) and 1.07(HardRock).
+LOG: Best odds on Raptors are 9.00(HardRock) and 9.75(MGM).
+LOG: Arbitrage not found. Best odds on Pistons ware 1.62(MGM) and 1.62(MGM).
+LOG: Best odds on Warriors are 2.35(MGM) and 2.35(MGM).
+LOG: Arbitrage not found. Best odds on Magic are 2.35(MGM) and 2.35(MGM).
+LOG: Best odds on Timberwolves are 1.61(MGM) and 1.62(HardRock).
+LOG: Arbitrage not found. Best odds on Grizzlies are 2.20(MGM) and 2.25(HardRock).
+LOG: Best odds on Rockets are 1.69(MGM) and 1.69(MGM).
+LOG: Arbitrage not found. Best odds on Mavericks are 1.33(MGM) and 1.33(MGM).
+LOG: Best odds on Trail Blazers are 3.30(MGM) and 3.30(MGM).
+LOG: Arbitrage not found. Best odds on Hawks are 2.45(HardRock) and 2.50(MGM).
+LOG: Best odds on Suns are 1.54(MGM) and 1.57(HardRock).
+LOG: Arbitrage not found. Best odds on Heat are 1.44(MGM) and 1.45(HardRock).
+LOG: Best odds on Jazz are 2.70(HardRock) and 2.80(MGM).
+LOG: Arbitrage not found. Best odds on Hornets are 4.00(HardRock) and 4.40(MGM).
+LOG: Best odds on Lakers are 1.22(MGM) and 1.25(HardRock).
+LOG: Arbitrage not found. Best odds on Blazers are 3.25(HardRock) and 3.25(HardRock).
+LOG: Best odds on Mavericks are 1.33(HardRock) and 1.33(HardRock).
+LOG: Loop 1
+WARNING: [MGM][NBA] Pistons, Warriors event has no spread info.
+WARNING: [MGM][NBA] Pistons, Warriors event has no total info.
+LOG: Arbitrage not found. Best odds on Clippers are 9.50(MGM) and 12.00(HardRock).
+LOG: Best odds on Nuggets are 1.04(HardRock) and 1.05(MGM).
+LOG: Arbitrage not found. Best odds on Bucks are 1.12(HardRock) and 1.15(MGM).
+LOG: Best odds on Spurs are 5.25(MGM) and 6.25(HardRock).
+LOG: Arbitrage not found. Best odds on Cavaliers are 1.06(MGM) and 1.07(HardRock).
+LOG: Best odds on Raptors are 9.00(HardRock) and 9.75(MGM).
+LOG: Arbitrage not found. Best odds on Pistons are 1.62(MGM) and 1.62(MGM).
+LOG: Best odds on Warriors are 2.35(MGM) and 2.35(MGM).
+LOG: Arbitrage not found. Best odds on Magic are 2.35(MGM) and 2.35(MGM).
+LOG: Best odds on Timberwolves are 1.61(MGM) and 1.62(HardRock).
+LOG: Arbitrage not found. Best odds on Grizzlies are 2.20(MGM) and 2.25(HardRock).
+LOG: Best odds on Rockets are 1.69(MGM) and 1.69(MGM).
+LOG: Arbitrage not found. Best odds on Mavericks are 1.33(MGM) and 1.33(MGM).
+LOG: Best odds on Trail Blazers are 3.30(MGM) and 3.30(MGM).
+LOG: Arbitrage not found. Best odds on Hawks are 2.45(HardRock) and 2.50(MGM).
+LOG: Best odds on Suns are 1.54(MGM) and 1.57(HardRock).
+LOG: Arbitrage not found. Best odds on Heat are 1.44(MGM) and 1.45(HardRock).
+LOG: Best odds on Jazz are 2.70(HardRock) and 2.80(MGM).
+LOG: Arbitrage not found. Best odds on Hornets are 4.25(HardRock) and 4.40(MGM).
+LOG: Best odds on Lakers are 1.22(MGM) and 1.22(MGM).
+LOG: Arbitrage not found. Best odds on Blazers are 3.25(HardRock) and 3.25(HardRock).
+LOG: Best odds on Mavericks are 1.33(HardRock) and 1.33(HardRock).
+LOG: Loop 2
+WARNING: [MGM][NBA] Pistons, Warriors event has no spread info.
+WARNING: [MGM][NBA] Pistons, Warriors event has no total info.
+LOG: Arbitrage not found. Best odds on Clippers are 11.00(MGM) and 12.00(HardRock).
+LOG: Best odds on Nuggets are 1.04(MGM) and 1.04(MGM).
+LOG: Arbitrage not found. Best odds on Bucks are 1.12(HardRock) and 1.13(MGM).
+LOG: Best odds on Spurs are 5.75(MGM) and 6.50(HardRock).
+LOG: Arbitrage not found. Best odds on Cavaliers are 1.06(MGM) and 1.07(HardRock).
+LOG: Best odds on Raptors are 9.00(HardRock) and 9.75(MGM).
+LOG: Arbitrage not found. Best odds on Pistons are 1.62(MGM) and 1.62(MGM).
+LOG: Best odds on Warriors are 2.35(MGM) and 2.35(MGM).
+LOG: Arbitrage not found. Best odds on Magic are 2.35(MGM) and 2.35(MGM).
+LOG: Best odds on Timberwolves are 1.61(MGM) and 1.62(HardRock).
+LOG: Arbitrage not found. Best odds on Grizzlies are 2.20(MGM) and 2.25(HardRock).
+LOG: Best odds on Rockets are 1.69(MGM) and 1.69(MGM).
+LOG: Arbitrage not found. Best odds on Mavericks are 1.33(MGM) and 1.33(MGM).
+LOG: Best odds on Trail Blazers are 3.30(MGM) and 3.30(MGM).
+LOG: Arbitrage not found. Best odds on Hawks are 2.45(HardRock) and 2.50(MGM).
+LOG: Best odds on Suns are 1.54(MGM) and 1.57(HardRock).
+LOG: Arbitrage not found. Best odds on Heat are 1.44(MGM) and 1.45(HardRock).
+LOG: Best odds on Jazz are 2.70(HardRock) and 2.80(MGM).
+LOG: Arbitrage not found. Best odds on Hornets are 4.25(HardRock) and 4.40(MGM).
+LOG: Best odds on Lakers are 1.22(MGM) and 1.22(MGM).
+LOG: Arbitrage not found. Best odds on Blazers are 3.25(HardRock) and 3.25(HardRock).
+LOG: Best odds on Mavericks are 1.33(HardRock) and 1.33(HardRock).
+LOG: Loop 3
+WARNING: [MGM][NBA] Pistons, Warriors event has no spread info.
+WARNING: [MGM][NBA] Pistons, Warriors event has no total info.
+LOG: Arbitrage not found. Best odds on Clippers are 11.50(MGM) and 12.00(HardRock).
+LOG: Best odds on Nuggets are 1.03(MGM) and 1.04(HardRock).
+LOG: Arbitrage not found. Best odds on Bucks are 1.12(HardRock) and 1.15(MGM).
+LOG: Best odds on Spurs are 5.25(MGM) and 6.50(HardRock).
+LOG: Arbitrage not found. Best odds on Cavaliers are 1.06(MGM) and 1.07(HardRock).
+LOG: Best odds on Raptors are 9.00(HardRock) and 9.75(MGM).
+LOG: Arbitrage not found. Best odds on Pistons are 1.62(MGM) and 1.62(MGM).
+LOG: Best odds on Warriors are 2.35(MGM) and 2.35(MGM).
+LOG: Arbitrage not found. Best odds on Magic are 2.35(MGM) and 2.35(MGM).
+LOG: Best odds on Timberwolves are 1.61(MGM) and 1.62(HardRock).
+LOG: Arbitrage not found. Best odds on Grizzlies are 2.20(MGM) and 2.25(HardRock).
+LOG: Best odds on Rockets are 1.69(MGM) and 1.69(MGM).
+LOG: Arbitrage not found. Best odds on Mavericks are 1.33(MGM) and 1.33(MGM).
+LOG: Best odds on Trail Blazers are 3.30(MGM) and 3.30(MGM).
+LOG: Arbitrage not found. Best odds on Hawks are 2.45(HardRock) and 2.50(MGM).
+LOG: Best odds on Suns are 1.54(MGM) and 1.57(HardRock).
+LOG: Arbitrage not found. Best odds on Heat are 1.44(MGM) and 1.45(HardRock).
+LOG: Best odds on Jazz are 2.70(HardRock) and 2.80(MGM).
+LOG: Arbitrage not found. Best odds on Hornets are 4.25(HardRock) and 4.40(MGM).
+LOG: Best odds on Lakers are 1.22(MGM) and 1.22(MGM).
+LOG: Arbitrage not found. Best odds on Blazers are 3.25(HardRock) and 3.25(HardRock).
+LOG: Best odds on Mavericks are 1.33(HardRock) and 1.33(HardRock).
+LOG: Loop 4
+WARNING: [MGM][NBA] Pistons, Warriors event has no spread info.
+WARNING: [MGM][NBA] Pistons, Warriors event has no total info.
+LOG: Arbitrage not found. Best odds on Clippers are 12.00(MGM) and 14.00(HardRock).
+LOG: Best odds on Nuggets are 1.02(HardRock) and 1.03(MGM).
+LOG: Arbitrage not found. Best odds on Bucks are 1.12(HardRock) and 1.17(MGM).
+LOG: Best odds on Spurs are 5.00(MGM) and 6.25(HardRock).
+LOG: Arbitrage not found. Best odds on Cavaliers are 1.06(MGM) and 1.07(HardRock).
+LOG: Best odds on Raptors are 9.00(HardRock) and 9.75(MGM).
+LOG: Arbitrage not found. Best odds on Pistons are 1.62(MGM) and 1.62(MGM).
+LOG: Best odds on Warriors are 2.35(MGM) and 2.35(MGM).
+LOG: Arbitrage not found. Best odds on Magic are 2.35(MGM) and 2.35(MGM).
+LOG: Best odds on Timberwolves are 1.61(MGM) and 1.62(HardRock).
+LOG: Arbitrage not found. Best odds on Grizzlies are 2.20(MGM) and 2.25(HardRock).
+LOG: Best odds on Rockets are 1.69(MGM) and 1.69(MGM).
+LOG: Arbitrage not found. Best odds on Mavericks are 1.33(MGM) and 1.33(MGM).
+LOG: Best odds on Trail Blazers are 3.30(MGM) and 3.30(MGM).
+LOG: Arbitrage not found. Best odds on Hawks are 2.45(HardRock) and 2.50(MGM).
+LOG: Best odds on Suns are 1.54(MGM) and 1.57(HardRock).
+LOG: Arbitrage not found. Best odds on Heat are 1.44(MGM) and 1.45(HardRock).
+LOG: Best odds on Jazz are 2.70(HardRock) and 2.80(MGM).
+LOG: Arbitrage not found. Best odds on Hornets are 4.10(MGM) and 4.25(HardRock).
+LOG: Best odds on Lakers are 1.22(HardRock) and 1.25(MGM).
+LOG: Arbitrage not found. Best odds on Blazers are 3.25(HardRock) and 3.25(HardRock).
+LOG: Best odds on Mavericks are 1.33(HardRock) and 1.33(HardRock).
+LOG: Loop 5
+WARNING: [MGM][NBA] Pistons, Warriors event has no spread info.
+WARNING: [MGM][NBA] Pistons, Warriors event has no total info.
+LOG: Arbitrage not found. Best odds on Clippers are 12.00(MGM) and 14.00(HardRock).
+LOG: Best odds on Nuggets are 1.02(HardRock) and 1.03(MGM).
+LOG: Arbitrage not found. Best odds on Bucks are 1.12(HardRock) and 1.17(MGM).
+LOG: Best odds on Spurs are 5.00(MGM) and 6.25(HardRock).
+LOG: Arbitrage not found. Best odds on Cavaliers are 1.06(MGM) and 1.07(HardRock).
+LOG: Best odds on Raptors are 9.00(HardRock) and 9.75(MGM).
+LOG: Arbitrage not found. Best odds on Pistons are 1.62(MGM) and 1.62(MGM).
+LOG: Best odds on Warriors are 2.35(MGM) and 2.35(MGM).
+LOG: Arbitrage not found. Best odds on Magic are 2.35(MGM) and 2.35(MGM).
+LOG: Best odds on Timberwolves are 1.61(MGM) and 1.62(HardRock).
+LOG: Arbitrage not found. Best odds on Grizzlies are 2.20(MGM) and 2.25(HardRock).
+LOG: Best odds on Rockets are 1.69(MGM) and 1.69(MGM).
+LOG: Arbitrage not found. Best odds on Mavericks are 1.33(MGM) and 1.33(MGM).
+LOG: Best odds on Trail Blazers are 3.30(MGM) and 3.30(MGM).
+LOG: Arbitrage not found. Best odds on Hawks are 2.45(HardRock) and 2.50(MGM).
+LOG: Best odds on Suns are 1.54(MGM) and 1.57(HardRock).
+LOG: Arbitrage not found. Best odds on Heat are 1.44(MGM) and 1.45(HardRock).
+LOG: Best odds on Jazz are 2.70(HardRock) and 2.80(MGM).
+LOG: Arbitrage not found. Best odds on Hornets are 4.10(MGM) and 4.25(HardRock).
+LOG: Best odds on Lakers are 1.22(HardRock) and 1.25(MGM).
+LOG: Arbitrage not found. Best odds on Blazers are 3.25(HardRock) and 3.25(HardRock).
+LOG: Best odds on Mavericks are 1.33(HardRock) and 1.33(HardRock).
+LOG: Loop 6
+WARNING: [MGM][NBA] Pistons, Warriors event has no spread info.
+WARNING: [MGM][NBA] Pistons, Warriors event has no total info.
+LOG: Arbitrage not found. Best odds on Clippers are 14.00(HardRock) and 16.00(MGM).
+LOG: Best odds on Nuggets are 1.01(MGM) and 1.02(HardRock).
+LOG: Arbitrage not found. Best odds on Bucks are 1.17(HardRock) and 1.25(MGM).
+LOG: Best odds on Spurs are 3.90(MGM) and 5.25(HardRock).
+LOG: Arbitrage not found. Best odds on Cavaliers are 1.06(MGM) and 1.07(HardRock).
+LOG: Best odds on Raptors are 9.00(HardRock) and 9.75(MGM).
+LOG: Arbitrage not found. Best odds on Pistons are 1.62(MGM) and 1.62(MGM).
+LOG: Best odds on Warriors are 2.35(MGM) and 2.35(MGM).
+LOG: Arbitrage not found. Best odds on Magic are 2.35(MGM) and 2.35(MGM).
+LOG: Best odds on Timberwolves are 1.61(MGM) and 1.62(HardRock).
+LOG: Arbitrage not found. Best odds on Grizzlies are 2.20(MGM) and 2.25(HardRock).
+LOG: Best odds on Rockets are 1.69(MGM) and 1.69(MGM).
+LOG: Arbitrage not found. Best odds on Mavericks are 1.33(MGM) and 1.33(MGM).
+LOG: Best odds on Trail Blazers are 3.30(MGM) and 3.30(MGM).
+LOG: Arbitrage not found. Best odds on Hawks are 2.45(HardRock) and 2.50(MGM).
+LOG: Best odds on Suns are 1.54(MGM) and 1.57(HardRock).
+LOG: Arbitrage not found. Best odds on Heat are 1.44(MGM) and 1.45(HardRock).
+LOG: Best odds on Jazz are 2.70(HardRock) and 2.80(MGM).
+LOG: Arbitrage not found. Best odds on Hornets are 4.10(MGM) and 4.25(HardRock).
+LOG: Best odds on Lakers are 1.22(HardRock) and 1.25(MGM).
+LOG: Arbitrage not found. Best odds on Blazers are 3.25(HardRock) and 3.25(HardRock).
+LOG: Best odds on Mavericks are 1.33(HardRock) and 1.33(HardRock).
+LOG: Loop 7
+WARNING: [MGM][NBA] Pistons, Warriors event has no spread info.
+WARNING: [MGM][NBA] Pistons, Warriors event has no total info.
+LOG: Arbitrage not found. Best odds on Clippers are 14.00(HardRock) and 16.00(MGM).
+LOG: Best odds on Nuggets are 1.01(MGM) and 1.02(HardRock).
+LOG: Arbitrage not found. Best odds on Bucks are 1.17(HardRock) and 1.18(MGM).
+LOG: Best odds on Spurs are 4.75(MGM) and 5.25(HardRock).
+LOG: Arbitrage not found. Best odds on Cavaliers are 1.06(MGM) and 1.07(HardRock).
+LOG: Best odds on Raptors are 9.00(HardRock) and 9.75(MGM).
+LOG: Arbitrage not found. Best odds on Pistons are 1.62(MGM) and 1.62(MGM).
+LOG: Best odds on Warriors are 2.35(MGM) and 2.35(MGM).
+LOG: Arbitrage not found. Best odds on Magic are 2.35(MGM) and 2.35(MGM).
+LOG: Best odds on Timberwolves are 1.61(MGM) and 1.62(HardRock).
+LOG: Arbitrage not found. Best odds on Grizzlies are 2.20(MGM) and 2.25(HardRock).
+LOG: Best odds on Rockets are 1.69(MGM) and 1.69(MGM).
+LOG: Arbitrage not found. Best odds on Mavericks are 1.33(MGM) and 1.33(MGM).
+LOG: Best odds on Trail Blazers are 3.30(MGM) and 3.30(MGM).
+LOG: Arbitrage not found. Best odds on Hawks are 2.45(HardRock) and 2.50(MGM).
+LOG: Best odds on Suns are 1.54(MGM) and 1.57(HardRock).
+LOG: Arbitrage not found. Best odds on Heat are 1.44(MGM) and 1.45(HardRock).
+LOG: Best odds on Jazz are 2.70(HardRock) and 2.80(MGM).
+LOG: Arbitrage not found. Best odds on Hornets are 4.10(MGM) and 4.25(HardRock).
+LOG: Best odds on Lakers are 1.22(HardRock) and 1.25(MGM).
+LOG: Arbitrage not found. Best odds on Blazers are 3.25(HardRock) and 3.25(HardRock).
+LOG: Best odds on Mavericks are 1.33(HardRock) and 1.33(HardRock).
+LOG: Loop 8
+WARNING: [MGM][NBA] Pistons, Warriors event has no spread info.
+WARNING: [MGM][NBA] Pistons, Warriors event has no total info.
+LOG: Arbitrage not found. Best odds on Clippers are 15.00(HardRock) and 16.00(MGM).
+LOG: Best odds on Nuggets are 1.01(MGM) and 1.02(HardRock).
+LOG: Arbitrage not found. Best odds on Bucks are 1.15(HardRock) and 1.25(MGM).
+LOG: Best odds on Spurs are 4.00(MGM) and 5.50(HardRock).
+LOG: Arbitrage not found. Best odds on Cavaliers are 1.06(MGM) and 1.07(HardRock).
+LOG: Best odds on Raptors are 9.00(HardRock) and 9.75(MGM).
+LOG: Arbitrage not found. Best odds on Pistons are 1.62(MGM) and 1.62(MGM).
+LOG: Best odds on Warriors are 2.35(MGM) and 2.35(MGM).
+LOG: Arbitrage not found. Best odds on Magic are 2.35(MGM) and 2.35(MGM).
+LOG: Best odds on Timberwolves are 1.61(MGM) and 1.62(HardRock).
+LOG: Arbitrage not found. Best odds on Grizzlies are 2.20(MGM) and 2.25(HardRock).
+LOG: Best odds on Rockets are 1.69(MGM) and 1.69(MGM).
+LOG: Arbitrage not found. Best odds on Mavericks are 1.33(MGM) and 1.33(MGM).
+LOG: Best odds on Trail Blazers are 3.30(MGM) and 3.30(MGM).
+LOG: Arbitrage not found. Best odds on Hawks are 2.45(HardRock) and 2.50(MGM).
+LOG: Best odds on Suns are 1.54(MGM) and 1.57(HardRock).
+LOG: Arbitrage not found. Best odds on Heat are 1.44(MGM) and 1.45(HardRock).
+LOG: Best odds on Jazz are 2.70(HardRock) and 2.80(MGM).
+LOG: Arbitrage not found. Best odds on Hornets are 4.10(MGM) and 4.25(HardRock).
+LOG: Best odds on Lakers are 1.22(HardRock) and 1.25(MGM).
+LOG: Arbitrage not found. Best odds on Blazers are 3.25(HardRock) and 3.25(HardRock).
+LOG: Best odds on Mavericks are 1.33(HardRock) and 1.33(HardRock).
+LOG: Loop 9
+WARNING: [MGM][NBA] Pistons, Warriors event has no spread info.
+WARNING: [MGM][NBA] Pistons, Warriors event has no total info.
+LOG: Arbitrage not found. Best odds on Clippers are 14.00(HardRock) and 15.00(MGM).
+LOG: Best odds on Nuggets are 1.01(MGM) and 1.02(HardRock).
+LOG: Arbitrage not found. Best odds on Bucks are 1.17(HardRock) and 1.25(MGM).
+LOG: Best odds on Spurs are 4.00(MGM) and 5.25(HardRock).
+LOG: Arbitrage not found. Best odds on Cavaliers are 1.06(MGM) and 1.07(HardRock).
+LOG: Best odds on Raptors are 9.00(HardRock) and 9.75(MGM).
+LOG: Arbitrage not found. Best odds on Pistons are 1.62(MGM) and 1.62(MGM).
+LOG: Best odds on Warriors are 2.35(MGM) and 2.35(MGM).
+LOG: Arbitrage not found. Best odds on Magic are 2.35(MGM) and 2.35(MGM).
+LOG: Best odds on Timberwolves are 1.61(MGM) and 1.62(HardRock).
+LOG: Arbitrage not found. Best odds on Grizzlies are 2.20(MGM) and 2.25(HardRock).
+LOG: Best odds on Rockets are 1.69(MGM) and 1.69(MGM).
+LOG: Arbitrage not found. Best odds on Mavericks are 1.33(MGM) and 1.33(MGM).
+LOG: Best odds on Trail Blazers are 3.30(MGM) and 3.30(MGM).
+LOG: Arbitrage not found. Best odds on Hawks are 2.45(HardRock) and 2.50(MGM).
+LOG: Best odds on Suns are 1.54(MGM) and 1.57(HardRock).
+LOG: Arbitrage not found. Best odds on Heat are 1.44(MGM) and 1.45(HardRock).
+LOG: Best odds on Jazz are 2.70(HardRock) and 2.80(MGM).
+LOG: Arbitrage not found. Best odds on Hornets are 4.10(MGM) and 4.25(HardRock).
+LOG: Best odds on Lakers are 1.22(HardRock) and 1.25(MGM).
+LOG: Arbitrage not found. Best odds on Blazers are 3.25(HardRock) and 3.25(HardRock).
+LOG: Best odds on Mavericks are 1.33(HardRock) and 1.33(HardRock).
+LOG: Loop 10
+WARNING: [MGM][NBA] Pistons, Warriors event has no spread info.
+WARNING: [MGM][NBA] Pistons, Warriors event has no total info.
+LOG: Arbitrage not found. Best odds on Clippers are 14.00(HardRock) and 16.00(MGM).
+LOG: Best odds on Nuggets are 1.01(MGM) and 1.02(HardRock).
+LOG: Arbitrage not found. Best odds on Bucks are 1.13(HardRock) and 1.25(MGM).
+LOG: Best odds on Spurs are 3.90(MGM) and 6.00(HardRock).
+LOG: Arbitrage not found. Best odds on Cavaliers are 1.06(MGM) and 1.07(HardRock).
+LOG: Best odds on Raptors are 9.00(HardRock) and 9.75(MGM).
+LOG: Arbitrage not found. Best odds on Pistons are 1.62(MGM) and 1.62(MGM).
+LOG: Best odds on Warriors are 2.35(MGM) and 2.35(MGM).
+LOG: Arbitrage not found. Best odds on Magic are 2.35(MGM) and 2.35(MGM).
+LOG: Best odds on Timberwolves are 1.61(MGM) and 1.62(HardRock).
+LOG: Arbitrage not found. Best odds on Grizzlies are 2.20(MGM) and 2.25(HardRock).
+LOG: Best odds on Rockets are 1.69(MGM) and 1.69(MGM).
+LOG: Arbitrage not found. Best odds on Mavericks are 1.33(MGM) and 1.33(MGM).
+LOG: Best odds on Trail Blazers are 3.30(MGM) and 3.30(MGM).
+LOG: Arbitrage not found. Best odds on Hawks are 2.45(HardRock) and 2.50(MGM).
+LOG: Best odds on Suns are 1.54(MGM) and 1.57(HardRock).
+LOG: Arbitrage not found. Best odds on Heat are 1.44(MGM) and 1.45(HardRock).
+LOG: Best odds on Jazz are 2.70(HardRock) and 2.80(MGM).
+LOG: Arbitrage not found. Best odds on Hornets are 4.10(MGM) and 4.25(HardRock).
+LOG: Best odds on Lakers are 1.22(HardRock) and 1.25(MGM).
+LOG: Arbitrage not found. Best odds on Blazers are 3.25(HardRock) and 3.25(HardRock).
+LOG: Best odds on Mavericks are 1.33(HardRock) and 1.33(HardRock).
+LOG: Loop 11
+WARNING: [MGM][NBA] Pistons, Warriors event has no spread info.
+WARNING: [MGM][NBA] Pistons, Warriors event has no total info.
+LOG: Arbitrage not found. Best odds on Clippers are 14.00(HardRock) and 15.00(MGM).
+LOG: Best odds on Nuggets are 1.01(MGM) and 1.02(HardRock).
+LOG: Arbitrage not found. Best odds on Bucks are 1.13(HardRock) and 1.25(MGM).
+LOG: Best odds on Spurs are 4.00(MGM) and 6.00(HardRock).
+LOG: Arbitrage not found. Best odds on Cavaliers are 1.06(MGM) and 1.07(HardRock).
+LOG: Best odds on Raptors are 9.00(HardRock) and 9.75(MGM).
+LOG: Arbitrage not found. Best odds on Pistons are 1.62(MGM) and 1.62(MGM).
+LOG: Best odds on Warriors are 2.35(MGM) and 2.35(MGM).
+LOG: Arbitrage not found. Best odds on Magic are 2.35(MGM) and 2.35(MGM).
+LOG: Best odds on Timberwolves are 1.61(MGM) and 1.62(HardRock).
+LOG: Arbitrage not found. Best odds on Grizzlies are 2.20(MGM) and 2.25(HardRock).
+LOG: Best odds on Rockets are 1.69(MGM) and 1.69(MGM).
+LOG: Arbitrage not found. Best odds on Mavericks are 1.33(MGM) and 1.33(MGM).
+LOG: Best odds on Trail Blazers are 3.30(MGM) and 3.30(MGM).
+LOG: Arbitrage not found. Best odds on Hawks are 2.45(HardRock) and 2.50(MGM).
+LOG: Best odds on Suns are 1.54(MGM) and 1.57(HardRock).
+LOG: Arbitrage not found. Best odds on Heat are 1.44(MGM) and 1.45(HardRock).
+LOG: Best odds on Jazz are 2.70(HardRock) and 2.80(MGM).
+LOG: Arbitrage not found. Best odds on Hornets are 4.10(MGM) and 4.25(HardRock).
+LOG: Best odds on Lakers are 1.22(HardRock) and 1.25(MGM).
+LOG: Arbitrage not found. Best odds on Blazers are 3.25(HardRock) and 3.25(HardRock).
+LOG: Best odds on Mavericks are 1.33(HardRock) and 1.33(HardRock).
+LOG: Loop 12
+WARNING: [MGM][NBA] Pistons, Warriors event has no spread info.
+WARNING: [MGM][NBA] Pistons, Warriors event has no total info.
+LOG: Arbitrage not found. Best odds on Clippers are 14.00(HardRock) and 15.00(MGM).
+LOG: Best odds on Nuggets are 1.01(MGM) and 1.02(HardRock).
+LOG: Arbitrage not found. Best odds on Bucks are 1.09(HardRock) and 1.15(MGM).
+LOG: Best odds on Spurs are 5.25(MGM) and 8.00(HardRock).
+LOG: Arbitrage not found. Best odds on Cavaliers are 1.06(MGM) and 1.07(HardRock).
+LOG: Best odds on Raptors are 9.00(HardRock) and 9.75(MGM).
+LOG: Arbitrage not found. Best odds on Pistons are 1.62(MGM) and 1.62(MGM).
+LOG: Best odds on Warriors are 2.35(MGM) and 2.35(MGM).
+LOG: Arbitrage not found. Best odds on Magic are 2.35(MGM) and 2.35(MGM).
+LOG: Best odds on Timberwolves are 1.61(MGM) and 1.62(HardRock).
+LOG: Arbitrage not found. Best odds on Grizzlies are 2.20(MGM) and 2.25(HardRock).
+LOG: Best odds on Rockets are 1.69(MGM) and 1.69(MGM).
+LOG: Arbitrage not found. Best odds on Mavericks are 1.33(MGM) and 1.33(MGM).
+LOG: Best odds on Trail Blazers are 3.30(MGM) and 3.30(MGM).
+LOG: Arbitrage not found. Best odds on Hawks are 2.45(HardRock) and 2.50(MGM).
+LOG: Best odds on Suns are 1.54(MGM) and 1.57(HardRock).
+LOG: Arbitrage not found. Best odds on Heat are 1.44(MGM) and 1.45(HardRock).
+LOG: Best odds on Jazz are 2.70(HardRock) and 2.80(MGM).
+LOG: Arbitrage not found. Best odds on Hornets are 4.10(MGM) and 4.25(HardRock).
+LOG: Best odds on Lakers are 1.22(HardRock) and 1.25(MGM).
+LOG: Arbitrage not found. Best odds on Blazers are 3.25(HardRock) and 3.25(HardRock).
+LOG: Best odds on Mavericks are 1.33(HardRock) and 1.33(HardRock).
+LOG: Loop 13
+WARNING: [MGM][NBA] Pistons, Warriors event has no spread info.
+WARNING: [MGM][NBA] Pistons, Warriors event has no total info.
+LOG: Arbitrage not found. Best odds on Clippers are 14.00(MGM) and 14.00(MGM).
+LOG: Best odds on Nuggets are 1.02(MGM) and 1.02(HardRock).
+LOG: Arbitrage not found. Best odds on Bucks are 1.06(HardRock) and 1.09(MGM).
+LOG: Best odds on Spurs are 7.25(MGM) and 9.50(HardRock).
+LOG: Arbitrage not found. Best odds on Cavaliers are 1.06(MGM) and 1.07(HardRock).
+LOG: Best odds on Raptors are 9.00(HardRock) and 9.75(MGM).
+LOG: Arbitrage not found. Best odds on Pistons are 1.62(MGM) and 1.62(MGM).
+LOG: Best odds on Warriors are 2.35(MGM) and 2.35(MGM).
+LOG: Arbitrage not found. Best odds on Magic are 2.35(MGM) and 2.35(MGM).
+LOG: Best odds on Timberwolves are 1.61(MGM) and 1.62(HardRock).
+LOG: Arbitrage not found. Best odds on Grizzlies are 2.20(MGM) and 2.25(HardRock).
+LOG: Best odds on Rockets are 1.69(MGM) and 1.69(MGM).
+LOG: Arbitrage not found. Best odds on Mavericks are 1.33(MGM) and 1.33(MGM).
+LOG: Best odds on Trail Blazers are 3.30(MGM) and 3.30(MGM).
+LOG: Arbitrage not found. Best odds on Hawks are 2.45(HardRock) and 2.50(MGM).
+LOG: Best odds on Suns are 1.54(MGM) and 1.57(HardRock).
+LOG: Arbitrage not found. Best odds on Heat are 1.44(MGM) and 1.45(HardRock).
+LOG: Best odds on Jazz are 2.70(HardRock) and 2.80(MGM).
+LOG: Arbitrage not found. Best odds on Hornets are 4.10(MGM) and 4.25(HardRock).
+LOG: Best odds on Lakers are 1.22(HardRock) and 1.25(MGM).
+LOG: Arbitrage not found. Best odds on Blazers are 3.25(HardRock) and 3.25(HardRock).
+LOG: Best odds on Mavericks are 1.33(HardRock) and 1.33(HardRock).
+LOG: Loop 14
+WARNING: [MGM][NBA] Pistons, Warriors event has no spread info.
+WARNING: [MGM][NBA] Pistons, Warriors event has no total info.
+LOG: Arbitrage not found. Best odds on Clippers are 14.00(MGM) and 15.00(HardRock).
+LOG: Best odds on Nuggets are 1.02(MGM) and 1.02(MGM).
+LOG: Arbitrage not found. Best odds on Bucks are 1.09(MGM) and 1.11(HardRock).
+LOG: Best odds on Spurs are 7.00(HardRock) and 7.25(MGM).
+LOG: Arbitrage not found. Best odds on Cavaliers are 1.06(MGM) and 1.07(HardRock).
+LOG: Best odds on Raptors are 9.00(HardRock) and 9.75(MGM).
+LOG: Arbitrage not found. Best odds on Pistons are 1.62(MGM) and 1.62(MGM).
+LOG: Best odds on Warriors are 2.35(MGM) and 2.35(MGM).
+LOG: Arbitrage not found. Best odds on Magic are 2.35(MGM) and 2.35(MGM).
+LOG: Best odds on Timberwolves are 1.61(MGM) and 1.62(HardRock).
+LOG: Arbitrage not found. Best odds on Grizzlies are 2.20(MGM) and 2.25(HardRock).
+LOG: Best odds on Rockets are 1.69(MGM) and 1.69(MGM).
+LOG: Arbitrage not found. Best odds on Mavericks are 1.33(MGM) and 1.33(MGM).
+LOG: Best odds on Trail Blazers are 3.30(MGM) and 3.30(MGM).
+LOG: Arbitrage not found. Best odds on Hawks are 2.45(HardRock) and 2.50(MGM).
+LOG: Best odds on Suns are 1.54(MGM) and 1.57(HardRock).
+LOG: Arbitrage not found. Best odds on Heat are 1.44(MGM) and 1.45(HardRock).
+LOG: Best odds on Jazz are 2.70(HardRock) and 2.80(MGM).
+LOG: Arbitrage not found. Best odds on Hornets are 4.10(MGM) and 4.25(HardRock).
+LOG: Best odds on Lakers are 1.22(HardRock) and 1.25(MGM).
+LOG: Arbitrage not found. Best odds on Blazers are 3.25(HardRock) and 3.25(HardRock).
+LOG: Best odds on Mavericks are 1.33(HardRock) and 1.33(HardRock).
+LOG: Loop 15
+WARNING: [MGM][NBA] ,  event has no spread info.
+WARNING: [MGM][NBA] ,  event has no total info.
+WARNING: [MGM][NBA] ,  event has no moneyline info, dropping.
+WARNING: [MGM][NBA] ,  event has no spread info.
+WARNING: [MGM][NBA] ,  event has no total info.
+WARNING: [MGM][NBA] ,  event has no moneyline info, dropping.
+WARNING: [MGM][NBA] ,  event has no spread info.
+WARNING: [MGM][NBA] ,  event has no total info.
+WARNING: [MGM][NBA] ,  event has no moneyline info, dropping.
+WARNING: [MGM][NBA] ,  event has no spread info.
+WARNING: [MGM][NBA] ,  event has no total info.
+WARNING: [MGM][NBA] ,  event has no moneyline info, dropping.
+WARNING: [MGM][NBA] ,  event has no spread info.
+WARNING: [MGM][NBA] ,  event has no total info.
+WARNING: [MGM][NBA] ,  event has no moneyline info, dropping.
+WARNING: [MGM][NBA] ,  event has no spread info.
+WARNING: [MGM][NBA] ,  event has no total info.
+WARNING: [MGM][NBA] ,  event has no moneyline info, dropping.
+WARNING: [MGM][NBA] ,  event has no spread info.
+WARNING: [MGM][NBA] ,  event has no total info.
+WARNING: [MGM][NBA] ,  event has no moneyline info, dropping.
+WARNING: [MGM][NBA] ,  event has no spread info.
+WARNING: [MGM][NBA] ,  event has no total info.
+WARNING: [MGM][NBA] ,  event has no moneyline info, dropping.
+WARNING: [MGM][NBA] ,  event has no spread info.
+WARNING: [MGM][NBA] ,  event has no total info.
+WARNING: [MGM][NBA] ,  event has no moneyline info, dropping.
+WARNING: [MGM][NBA] ,  event has no spread info.
+WARNING: [MGM][NBA] ,  event has no total info.
+WARNING: [MGM][NBA] ,  event has no moneyline info, dropping.
+LOG: Arbitrage not found. Best odds on Clippers are 15.00(HardRock) and 15.00(HardRock).
+LOG: Best odds on Nuggets are 1.02(HardRock) and 1.02(HardRock).
+LOG: Arbitrage not found. Best odds on Bucks are 1.11(HardRock) and 1.11(HardRock).
+LOG: Best odds on Spurs are 7.00(HardRock) and 7.00(HardRock).
+LOG: Arbitrage not found. Best odds on Magic are 2.35(HardRock) and 2.35(HardRock).
+LOG: Best odds on Timberwolves are 1.62(HardRock) and 1.62(HardRock).
+LOG: Arbitrage not found. Best odds on Cavaliers are 1.07(HardRock) and 1.07(HardRock).
+LOG: Best odds on Raptors are 9.00(HardRock) and 9.00(HardRock).
+LOG: Arbitrage not found. Best odds on Pistons are 1.62(HardRock) and 1.62(HardRock).
+LOG: Best odds on Warriors are 2.35(HardRock) and 2.35(HardRock).
+LOG: Arbitrage not found. Best odds on Grizzlies are 2.25(HardRock) and 2.25(HardRock).
+LOG: Best odds on Rockets are 1.69(HardRock) and 1.69(HardRock).
+LOG: Arbitrage not found. Best odds on Blazers are 3.25(HardRock) and 3.25(HardRock).
+LOG: Best odds on Mavericks are 1.33(HardRock) and 1.33(HardRock).
+LOG: Arbitrage not found. Best odds on Heat are 1.45(HardRock) and 1.45(HardRock).
+LOG: Best odds on Jazz are 2.70(HardRock) and 2.70(HardRock).
+LOG: Arbitrage not found. Best odds on Hawks are 2.45(HardRock) and 2.45(HardRock).
+LOG: Best odds on Suns are 1.57(HardRock) and 1.57(HardRock).
+LOG: Arbitrage not found. Best odds on Hornets are 4.25(HardRock) and 4.25(HardRock).
+LOG: Best odds on Lakers are 1.22(HardRock) and 1.22(HardRock).
+LOG: Loop 16
+WARNING: [MGM][NBA] Pistons, Warriors event has no spread info.
+WARNING: [MGM][NBA] Pistons, Warriors event has no total info.
+LOG: Arbitrage not found. Best odds on Clippers are 14.00(MGM) and 15.00(HardRock).
+LOG: Best odds on Nuggets are 1.02(MGM) and 1.02(MGM).
+LOG: Arbitrage not found. Best odds on Bucks are 1.11(HardRock) and 1.14(MGM).
+LOG: Best odds on Spurs are 5.75(MGM) and 7.00(HardRock).
+LOG: Arbitrage not found. Best odds on Cavaliers are 1.06(MGM) and 1.07(HardRock).
+LOG: Best odds on Raptors are 9.00(HardRock) and 9.75(MGM).
+LOG: Arbitrage not found. Best odds on Pistons are 1.62(MGM) and 1.62(MGM).
+LOG: Best odds on Warriors are 2.35(MGM) and 2.35(MGM).
+LOG: Arbitrage not found. Best odds on Magic are 2.35(MGM) and 2.35(MGM).
+LOG: Best odds on Timberwolves are 1.61(MGM) and 1.62(HardRock).
+LOG: Arbitrage not found. Best odds on Grizzlies are 2.20(MGM) and 2.25(HardRock).
+LOG: Best odds on Rockets are 1.69(MGM) and 1.69(MGM).
+LOG: Arbitrage not found. Best odds on Mavericks are 1.33(MGM) and 1.33(MGM).
+LOG: Best odds on Trail Blazers are 3.30(MGM) and 3.30(MGM).
+LOG: Arbitrage not found. Best odds on Hawks are 2.45(HardRock) and 2.50(MGM).
+LOG: Best odds on Suns are 1.54(MGM) and 1.57(HardRock).
+LOG: Arbitrage not found. Best odds on Heat are 1.44(MGM) and 1.45(HardRock).
+LOG: Best odds on Jazz are 2.70(HardRock) and 2.80(MGM).
+LOG: Arbitrage not found. Best odds on Hornets are 4.10(MGM) and 4.25(HardRock).
+LOG: Best odds on Lakers are 1.22(HardRock) and 1.25(MGM).
+LOG: Arbitrage not found. Best odds on Blazers are 3.25(HardRock) and 3.25(HardRock).
+LOG: Best odds on Mavericks are 1.33(HardRock) and 1.33(HardRock).
+LOG: Loop 17
+WARNING: [MGM][NBA] Pistons, Warriors event has no spread info.
+WARNING: [MGM][NBA] Pistons, Warriors event has no total info.
+LOG: Arbitrage not found. Best odds on Clippers are 14.00(MGM) and 15.00(HardRock).
+LOG: Best odds on Nuggets are 1.02(MGM) and 1.02(MGM).
+LOG: Arbitrage not found. Best odds on Bucks are 1.08(HardRock) and 1.14(MGM).
+LOG: Best odds on Spurs are 5.75(MGM) and 8.50(HardRock).
+LOG: Arbitrage not found. Best odds on Cavaliers are 1.06(MGM) and 1.07(HardRock).
+LOG: Best odds on Raptors are 9.00(HardRock) and 9.75(MGM).
+LOG: Arbitrage not found. Best odds on Pistons are 1.62(MGM) and 1.62(MGM).
+LOG: Best odds on Warriors are 2.35(MGM) and 2.35(MGM).
+LOG: Arbitrage not found. Best odds on Magic are 2.35(MGM) and 2.35(MGM).
+LOG: Best odds on Timberwolves are 1.61(MGM) and 1.62(HardRock).
+LOG: Arbitrage not found. Best odds on Grizzlies are 2.20(MGM) and 2.25(HardRock).
+LOG: Best odds on Rockets are 1.69(MGM) and 1.69(MGM).
+LOG: Arbitrage not found. Best odds on Mavericks are 1.33(MGM) and 1.33(MGM).
+LOG: Best odds on Trail Blazers are 3.30(MGM) and 3.30(MGM).
+LOG: Arbitrage not found. Best odds on Hawks are 2.45(HardRock) and 2.50(MGM).
+LOG: Best odds on Suns are 1.54(MGM) and 1.57(HardRock).
+LOG: Arbitrage not found. Best odds on Heat are 1.44(MGM) and 1.45(HardRock).
+LOG: Best odds on Jazz are 2.70(HardRock) and 2.80(MGM).
+LOG: Arbitrage not found. Best odds on Hornets are 4.10(MGM) and 4.25(HardRock).
+LOG: Best odds on Lakers are 1.22(HardRock) and 1.25(MGM).
+LOG: Arbitrage not found. Best odds on Blazers are 3.25(HardRock) and 3.25(HardRock).
+LOG: Best odds on Mavericks are 1.33(HardRock) and 1.33(HardRock).
+LOG: Loop 18
+WARNING: [MGM][NBA] Pistons, Warriors event has no spread info.
+WARNING: [MGM][NBA] Pistons, Warriors event has no total info.
+LOG: Arbitrage not found. Best odds on Clippers are 14.00(MGM) and 15.00(HardRock).
+LOG: Best odds on Nuggets are 1.02(MGM) and 1.02(MGM).
+LOG: Arbitrage not found. Best odds on Bucks are 1.09(HardRock) and 1.11(MGM).
+LOG: Best odds on Spurs are 6.50(MGM) and 8.00(HardRock).
+LOG: Arbitrage not found. Best odds on Cavaliers are 1.06(MGM) and 1.07(HardRock).
+LOG: Best odds on Raptors are 9.00(HardRock) and 9.75(MGM).
+LOG: Arbitrage not found. Best odds on Pistons are 1.62(MGM) and 1.62(MGM).
+LOG: Best odds on Warriors are 2.35(MGM) and 2.35(MGM).
+LOG: Arbitrage not found. Best odds on Magic are 2.35(MGM) and 2.35(MGM).
+LOG: Best odds on Timberwolves are 1.61(MGM) and 1.62(HardRock).
+LOG: Arbitrage not found. Best odds on Grizzlies are 2.20(MGM) and 2.25(HardRock).
+LOG: Best odds on Rockets are 1.69(MGM) and 1.69(MGM).
+LOG: Arbitrage not found. Best odds on Mavericks are 1.33(MGM) and 1.33(MGM).
+LOG: Best odds on Trail Blazers are 3.30(MGM) and 3.30(MGM).
+LOG: Arbitrage not found. Best odds on Hawks are 2.45(HardRock) and 2.50(MGM).
+LOG: Best odds on Suns are 1.54(MGM) and 1.57(HardRock).
+LOG: Arbitrage not found. Best odds on Heat are 1.44(MGM) and 1.45(HardRock).
+LOG: Best odds on Jazz are 2.70(HardRock) and 2.80(MGM).
+LOG: Arbitrage not found. Best odds on Hornets are 4.10(MGM) and 4.25(HardRock).
+LOG: Best odds on Lakers are 1.22(HardRock) and 1.25(MGM).
+LOG: Arbitrage not found. Best odds on Blazers are 3.25(HardRock) and 3.25(HardRock).
+LOG: Best odds on Mavericks are 1.33(HardRock) and 1.33(HardRock).
+LOG: Loop 19
+WARNING: [MGM][NBA] Pistons, Warriors event has no spread info.
+WARNING: [MGM][NBA] Pistons, Warriors event has no total info.
+LOG: Arbitrage not found. Best odds on Clippers are 14.00(MGM) and 15.00(HardRock).
+LOG: Best odds on Nuggets are 1.02(MGM) and 1.02(MGM).
+LOG: Arbitrage not found. Best odds on Bucks are 1.07(HardRock) and 1.10(MGM).
+LOG: Best odds on Spurs are 7.00(MGM) and 9.00(HardRock).
+LOG: Arbitrage not found. Best odds on Cavaliers are 1.06(MGM) and 1.07(HardRock).
+LOG: Best odds on Raptors are 9.00(HardRock) and 9.75(MGM).
+LOG: Arbitrage not found. Best odds on Pistons are 1.62(MGM) and 1.62(MGM).
+LOG: Best odds on Warriors are 2.35(MGM) and 2.35(MGM).
+LOG: Arbitrage not found. Best odds on Magic are 2.35(MGM) and 2.35(MGM).
+LOG: Best odds on Timberwolves are 1.61(MGM) and 1.62(HardRock).
+LOG: Arbitrage not found. Best odds on Grizzlies are 2.20(MGM) and 2.25(HardRock).
+LOG: Best odds on Rockets are 1.69(MGM) and 1.69(MGM).
+LOG: Arbitrage not found. Best odds on Mavericks are 1.33(MGM) and 1.33(MGM).
+LOG: Best odds on Trail Blazers are 3.30(MGM) and 3.30(MGM).
+LOG: Arbitrage not found. Best odds on Hawks are 2.45(HardRock) and 2.50(MGM).
+LOG: Best odds on Suns are 1.54(MGM) and 1.57(HardRock).
+LOG: Arbitrage not found. Best odds on Heat are 1.44(MGM) and 1.45(HardRock).
+LOG: Best odds on Jazz are 2.70(HardRock) and 2.80(MGM).
+LOG: Arbitrage not found. Best odds on Hornets are 4.10(MGM) and 4.25(HardRock).
+LOG: Best odds on Lakers are 1.22(HardRock) and 1.25(MGM).
+LOG: Arbitrage not found. Best odds on Blazers are 3.25(HardRock) and 3.25(HardRock).
+LOG: Best odds on Mavericks are 1.33(HardRock) and 1.33(HardRock).
+LOG: Loop 20
+WARNING: [MGM][NBA] Pistons, Warriors event has no spread info.
+WARNING: [MGM][NBA] Pistons, Warriors event has no total info.
+LOG: Arbitrage not found. Best odds on Clippers are 14.00(MGM) and 15.00(HardRock).
+LOG: Best odds on Nuggets are 1.02(MGM) and 1.02(MGM).
+LOG: Arbitrage not found. Best odds on Bucks are 1.08(HardRock) and 1.10(MGM).
+LOG: Best odds on Spurs are 6.75(MGM) and 8.50(HardRock).
+LOG: Arbitrage not found. Best odds on Cavaliers are 1.06(MGM) and 1.07(HardRock).
+LOG: Best odds on Raptors are 9.00(HardRock) and 9.75(MGM).
+LOG: Arbitrage not found. Best odds on Pistons are 1.62(MGM) and 1.62(MGM).
+LOG: Best odds on Warriors are 2.35(MGM) and 2.35(MGM).
+LOG: Arbitrage not found. Best odds on Magic are 2.35(MGM) and 2.35(MGM).
+LOG: Best odds on Timberwolves are 1.61(MGM) and 1.62(HardRock).
+LOG: Arbitrage not found. Best odds on Grizzlies are 2.20(MGM) and 2.25(HardRock).
+LOG: Best odds on Rockets are 1.69(MGM) and 1.69(MGM).
+LOG: Arbitrage not found. Best odds on Mavericks are 1.33(MGM) and 1.33(MGM).
+LOG: Best odds on Trail Blazers are 3.30(MGM) and 3.30(MGM).
+LOG: Arbitrage not found. Best odds on Hawks are 2.45(HardRock) and 2.50(MGM).
+LOG: Best odds on Suns are 1.54(MGM) and 1.57(HardRock).
+LOG: Arbitrage not found. Best odds on Heat are 1.44(MGM) and 1.45(HardRock).
+LOG: Best odds on Jazz are 2.70(HardRock) and 2.80(MGM).
+LOG: Arbitrage not found. Best odds on Hornets are 4.10(MGM) and 4.25(HardRock).
+LOG: Best odds on Lakers are 1.22(HardRock) and 1.25(MGM).
+LOG: Arbitrage not found. Best odds on Blazers are 3.25(HardRock) and 3.25(HardRock).
+LOG: Best odds on Mavericks are 1.33(HardRock) and 1.33(HardRock).
+LOG: Loop 21
+WARNING: [MGM][NBA] Pistons, Warriors event has no spread info.
+WARNING: [MGM][NBA] Pistons, Warriors event has no total info.
+LOG: Arbitrage not found. Best odds on Clippers are 14.00(MGM) and 18.50(HardRock).
+LOG: Best odds on Nuggets are 1.01(HardRock) and 1.02(MGM).
+LOG: Arbitrage not found. Best odds on Bucks are 1.05(HardRock) and 1.10(MGM).
+LOG: Best odds on Spurs are 6.75(MGM) and 11.00(HardRock).
+LOG: Arbitrage not found. Best odds on Cavaliers are 1.06(MGM) and 1.07(HardRock).
+LOG: Best odds on Raptors are 9.00(HardRock) and 9.75(MGM).
+LOG: Arbitrage not found. Best odds on Pistons are 1.62(MGM) and 1.62(MGM).
+LOG: Best odds on Warriors are 2.35(MGM) and 2.35(MGM).
+LOG: Arbitrage not found. Best odds on Magic are 2.35(MGM) and 2.35(MGM).
+LOG: Best odds on Timberwolves are 1.61(MGM) and 1.62(HardRock).
+LOG: Arbitrage not found. Best odds on Grizzlies are 2.20(MGM) and 2.25(HardRock).
+LOG: Best odds on Rockets are 1.69(MGM) and 1.69(MGM).
+LOG: Arbitrage not found. Best odds on Mavericks are 1.33(MGM) and 1.33(MGM).
+LOG: Best odds on Trail Blazers are 3.30(MGM) and 3.30(MGM).
+LOG: Arbitrage not found. Best odds on Hawks are 2.45(HardRock) and 2.50(MGM).
+LOG: Best odds on Suns are 1.54(MGM) and 1.57(HardRock).
+LOG: Arbitrage not found. Best odds on Heat are 1.44(MGM) and 1.45(HardRock).
+LOG: Best odds on Jazz are 2.70(HardRock) and 2.80(MGM).
+LOG: Arbitrage not found. Best odds on Hornets are 4.10(MGM) and 4.25(HardRock).
+LOG: Best odds on Lakers are 1.22(HardRock) and 1.25(MGM).
+LOG: Arbitrage not found. Best odds on Blazers are 3.25(HardRock) and 3.25(HardRock).
+LOG: Best odds on Mavericks are 1.33(HardRock) and 1.33(HardRock).
+LOG: Loop 22
+WARNING: [MGM][NBA] Pistons, Warriors event has no spread info.
+WARNING: [MGM][NBA] Pistons, Warriors event has no total info.

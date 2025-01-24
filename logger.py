@@ -4,7 +4,7 @@ class logger:
     level = 1
     lock = threading.Lock()
 
-    def log(level: int, message: str):
+    def log(message: str, level: int):
         if logger.level < level:
             return
         with logger.lock:

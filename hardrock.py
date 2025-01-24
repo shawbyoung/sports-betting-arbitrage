@@ -2,45 +2,43 @@ from driver import *
 
 class hardrock(driver):
     def __init__(self):
-        super().__init__('HardRock')
+        super().__init__('hardrock')
         self.promotions = {
             'nba'
         }
 
-    async def _login_aux(self):
+    def _login_aux(self):
         self.driver.get('https://app.hardrock.bet/')
 
-    async def _collect_nba_odds(self):
-        self.driver.get('https://app.hardrock.bet/sport-leagues/basketball/691033199537586178')
+    def _get_promotion_page(self, promotion):
+        match promotion:
+            case 'nba':
+                self.driver.get('https://app.hardrock.bet/sport-leagues/basketball/691033199537586178')
+            case _:
+                assert False, f'{promotion} undefined in {self.name}'
 
+    def _get_events(self, promotion: str):
         try:
             WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.CLASS_NAME, 'hr-outright-tab-content-container'))
             )
             time.sleep(1)
-            events_parent_div = self.driver.find_element(By.CLASS_NAME, 'hr-outright-tab-content-container')
+            return (self.driver.find_elements(By.CLASS_NAME, 'hr-outright-tab-content-container'))[1:]
         except:
-            logger.log_warning(f'[{self.name}][NBA] No events loaded.')
+            self._log_promotion(promotion, 'warning', 'No events loaded.')
             return []
-                
-        events = events_parent_div.find_elements(By.XPATH, "./*")
 
-        odds = []
-        for div in events[1:]:
-            participants = [participant_div.text for participant_div in div.find_elements(By.CLASS_NAME, 'participant')] 
-            if len(participants) != 2:
-                logger.log_warning(f'[{self.name}][NBA] Event dropped, participants len neq 2.')
-                continue
+    def _parse_event(self, promotion, event):
+        participants = [participant_div.text for participant_div in event.find_elements(By.CLASS_NAME, 'participant')] 
 
-            betting_categories_wrappers = div.find_elements(By.CLASS_NAME, 'selection-result')
-            
-            spread = betting_categories_wrappers[0].text.split()
-            total = betting_categories_wrappers[1].text.split()
-            moneyline = betting_categories_wrappers[2].text.split()
+        if len(participants) != 2:
+            self._log_promotion(promotion, 'error', 'Event dropped, participants len neq 2.')
+            return None
 
-            event_odds = self._create_event_odds(participants, spread, total, moneyline)
+        betting_categories_wrappers = event.find_elements(By.CLASS_NAME, 'selection-result')
+        
+        spread = betting_categories_wrappers[0].text.split()
+        total = betting_categories_wrappers[1].text.split()
+        moneyline = betting_categories_wrappers[2].text.split()
 
-            if event_odds:
-                odds.append(self._create_event_odds(participants, spread, total, moneyline))
-
-        return odds
+        return odds(promotion, participants, spread, total, moneyline, self._log_promotion)

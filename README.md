@@ -76,3 +76,29 @@ Traceback (most recent call last):
   File "/home/shawy/sports-betting-arbitrage/engine.py", line 26, in _find_arbitrage
     t1_moneyline_odds, t2_moneyline_odds = odds['t1_moneyline_odds'], odds['t2_moneyline_odds']
 KeyError: 't1_moneyline_odds'
+
+
+Traceback (most recent call last):
+  File "/home/shawy/sports-betting-arbitrage/main.py", line 7, in <module>
+    main()
+  File "/home/shawy/sports-betting-arbitrage/main.py", line 4, in main
+    engine()
+  File "/home/shawy/sports-betting-arbitrage/engine.py", line 13, in __init__
+    asyncio.run(engine.bet(sportsbooks, promotions))
+  File "/usr/lib/python3.10/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/home/shawy/sports-betting-arbitrage/engine.py", line 113, in bet
+    odds_nested = await asyncio.gather(*coros)
+  File "/home/shawy/sports-betting-arbitrage/driver.py", line 34, in collect_odds
+    odds = await asyncio.gather(*coros)
+  File "/home/shawy/sports-betting-arbitrage/betmgm.py", line 14, in _collect_nba_odds
+    self.driver.get('https://sports.va.betmgm.com/en/sports/basketball-7/betting/usa-9/nba-6004')
+  File "/home/shawy/.local/lib/python3.10/site-packages/selenium/webdriver/remote/webdriver.py", line 356, in get
+    self.execute(Command.GET, {"url": url})
+  File "/home/shawy/.local/lib/python3.10/site-packages/selenium/webdriver/remote/webdriver.py", line 347, in execute
+    self.error_handler.check_response(response)
+  File "/home/shawy/.local/lib/python3.10/site-packages/selenium/webdriver/remote/errorhandler.py", line 229, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.WebDriverException: Message: Failed to decode response from marionette
