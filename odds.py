@@ -1,9 +1,10 @@
 import util
+from logger import logger
 from typing import Callable
 
 def odds(
     sportsbook: str, promotion: str, participants: list[str], spread: list[str], 
-    total: list[str], moneyline: list[str], log_fn: Callable[[str, str, int | None], None]
+    total: list[str], moneyline: list[str]
 ):
     total_idx = 1
 
@@ -36,24 +37,31 @@ def odds(
         't2_name' : t2_name
     }
 
-    if len(spread) == 4 & spread[t1_spread_idx].isnumeric() & spread[t2_spread_idx].isnumeric():		
+    print(sportsbook, spread)
+    print(sportsbook, total)
+    print(sportsbook, moneyline)
+
+    if len(spread) == 4 & spread[t1_spread_idx][1:].isnumeric() & spread[t2_spread_idx][1:].isnumeric():		
         event_odds['t1_spread_odds'] = util.american.to_decimal(spread[t1_spread_idx])
         event_odds['t2_spread_odds'] = util.american.to_decimal(spread[t2_spread_idx])
     else:
-        log_fn('warning', f'{t1_name}, {t2_name} event has no valid spread info.')
+        logger.log_warning(f'[{sportsbook}] {t1_name}, {t2_name} event has no valid spread info.')
 
-    if len(total) == 6 & total[total_idx].isnumeric() & total[t1_total_idx].isnumeric() & total[t2_total_idx].isnumeric():
+    # consider dropping unnecessary information.
+    # add some form of checking for odds format.
+    if len(total) == 6:
         event_odds['total_score'] = total[total_idx]
         event_odds['t1_total_odds'] = util.american.to_decimal(total[t1_total_idx])
         event_odds['t2_total_odds'] = util.american.to_decimal(total[t2_total_idx])
     else:
-        log_fn('warning', f'{t1_name}, {t2_name} event has no total info.')
+        logger.log_warning(f'[{sportsbook}] {t1_name}, {t2_name} event has no total info.')
 
-    if len(moneyline) == 2 & moneyline[t1_moneyline_idx].isnumeric() & moneyline[t1_moneyline_idx].isnumeric():
+    # if len(moneyline) == 2 & moneyline[t1_moneyline_idx][1:].isnumeric() & moneyline[t1_moneyline_idx][1:].isnumeric():
+    if len(moneyline) == 2:
         event_odds['t1_moneyline_odds'] = util.american.to_decimal(moneyline[t1_moneyline_idx])
         event_odds['t2_moneyline_odds'] = util.american.to_decimal(moneyline[t2_moneyline_idx])
     else:
-        log_fn('warning', f'{t1_name}, {t2_name} event has no moneyline info, dropping.')
+        logger.log_warning(f'[{sportsbook}] {t1_name}, {t2_name} event has no moneyline info, dropping.')
         return None
 
     return event_odds

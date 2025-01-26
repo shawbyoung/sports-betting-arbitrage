@@ -102,3 +102,5 @@ Traceback (most recent call last):
   File "/home/shawy/.local/lib/python3.10/site-packages/selenium/webdriver/remote/errorhandler.py", line 229, in check_response
     raise exception_class(message, screen, stacktrace)
 selenium.common.exceptions.WebDriverException: Message: Failed to decode response from marionette
+
+source env/bin/activate

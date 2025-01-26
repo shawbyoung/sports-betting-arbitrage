@@ -12,36 +12,31 @@ from typing import Callable
 class driver:
 	def __init__(self, name):
 		self.name = name
-		logger.log(f'Initializing {self.name} web driver.')
-		self.driver = webdriver.Firefox()
-		self.promotions = {}
+		self._log(f'Initializing web driver.')
+		self.driver = webdriver.Chrome()
 
 	def driver_quit(self) -> None:
-		logger.log(f'Quitting {self.name} web driver.')
+		self._log(f'Quitting web driver.')
 		self.driver.quit()
 
-	def _log(self, type: str, message: str, level: int | None) -> None:
-		log = getattr(logger, f'log_{type}', None)
-		assert log, '"log"\'s type should be defined.'
+	def _log(self, log_type: str | None = None, message: str = None, level: int | None = None) -> None:
+		log_fn_str = f'log_{log_type}' if log_type else 'log'
+		log_fn = getattr(logger, log_fn_str, None)
+		assert log_fn, '"log"\'s type should be defined.'
 
-		if level == None:
-			log(f'[{self.name}] {message}')
+		if not level:
+			log_fn(f'[{self.name}] {message}')
 			return
 
-		log(f'[{self.name}] {message}', level)
-
-	def _log_promotion(
-     	self, promotion: str, type: str, message: str, level: int | None
-	) -> None:
-		self._log(type, f'[{promotion}] {message}', level)
+		log_fn(f'[{self.name}] {message}', level)
 
 	def _login_aux(self) -> None:
 		self.driver.get('www.example.com')
 
 	def login(self) -> None:
-		logger.log(f'Logging into {self.name}.')
+		self._log(f'Logging in.')
 		self._login_aux()
-		logger.log(f'Logged into {self.name}.')
+		self._log(f'Logged in.')
 
 	def _get_promotion_link(self, promotion: str):
 		pass 
@@ -51,9 +46,7 @@ class driver:
 		try:
 			self.driver.get(self.promotion_link(promotion))
 		except:
-			self._log_promotion(
-       			promotion, 'error', f'Cannot get {promotion} page from {self.name}.'
-          	)
+			self._log('error', f'Cannot get {promotion} page from {self.name}.')
 
 	# Returns elements that represent sports events.
 	def _get_events(self, promotion: str):
@@ -73,12 +66,4 @@ class driver:
 			event_odds = self._parse_event(promotion, event)
 			if event_odds:
 				odds.append(event_odds)
-
 		return odds
-
-	# async def collect_odds(self, promotions):
-	# 	odds = []
-	# 	requested_promotions = [p for p in self.promotions if p in promotions] 
-	# 	coros = [getattr(self, f'_collect_{p}_odds')() for p in requested_promotions]
-	# 	odds = await asyncio.gather(*coros)
-	# 	return list(chain.from_iterable(odds))

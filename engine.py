@@ -1,16 +1,19 @@
 import json
 import util
-from hardrock import hardrock
-from betmgm import betmgm
-from logger import logger
+
 from itertools import chain
-from driver import driver
 from concurrent.futures import ThreadPoolExecutor, as_completed
+
+from betmgm import betmgm
+from draftkings import draftkings 
+from driver import driver
+from hardrock import hardrock
+from logger import logger
 
 class engine:
 	def __init__(self):
 		self.config()
-		self.drivers = [betmgm(), hardrock()]
+		self.drivers = [betmgm(), draftkings()]
 
 		self.login()
 		self.bet()
@@ -28,9 +31,9 @@ class engine:
 		if not promotion_opt:
 			logger.log_error('No promotion in config file.')
 			exit(1)
+		util.promotion = promotion_opt	
+		logger.log(f'{util.promotion} selected as promotion.')
 
-		self.promotion = promotion_opt	
-  
 	def _run_on_all_drivers(self, task):
 		results = {}
 		with ThreadPoolExecutor(max_workers=len(self.drivers)) as executor:
@@ -139,13 +142,12 @@ class engine:
 	def bet(self):
 		idx = 0
 		def task(d: driver):
-			return d.get_odds(self.promotion)
+			return d.get_odds(util.promotion)
 
 		logger.log('Entering arbitrage monitoring loop.')
 		while True:
 			logger.log(f'Loop {idx}.')
 			results = self._run_on_all_drivers(task)
-			print(results)
 			self._find_arbitrage(list(chain.from_iterable(results.values())))
 			idx += 1
 

@@ -7,5 +7,7 @@ class american:
 def compute_arb(t1_odds, t2_odds):
     return (1/t1_odds) + (1/t2_odds)
 
+promotion = 'undefined'
+
 # def convert_odds_to_decimal(american_odds: int) -> float:
 #     return (american_odds / 100) + 1

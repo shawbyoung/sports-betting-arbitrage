@@ -25,14 +25,14 @@ class hardrock(driver):
             time.sleep(1)
             return (self.driver.find_elements(By.CLASS_NAME, 'hr-outright-tab-content-container'))[1:]
         except:
-            self._log_promotion(promotion, 'warning', 'No events loaded.')
+            self._log('warning', 'No events loaded.')
             return []
 
     def _parse_event(self, promotion, event):
         participants = [participant_div.text for participant_div in event.find_elements(By.CLASS_NAME, 'participant')] 
 
         if len(participants) != 2:
-            self._log_promotion(promotion, 'error', 'Event dropped, participants len neq 2.')
+            self._log('error', 'Event dropped, participants len neq 2.')
             return None
 
         betting_categories_wrappers = event.find_elements(By.CLASS_NAME, 'selection-result')
@@ -41,4 +41,4 @@ class hardrock(driver):
         total = betting_categories_wrappers[1].text.split()
         moneyline = betting_categories_wrappers[2].text.split()
 
-        return odds(promotion, participants, spread, total, moneyline, self._log_promotion)
+        return odds(self.name, promotion, participants, spread, total, moneyline)
