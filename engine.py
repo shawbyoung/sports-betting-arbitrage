@@ -142,7 +142,7 @@ class engine:
 	def bet(self):
 		idx = 0
 		def task(d: driver):
-			return d.get_odds(util.promotion)
+			return d.get_odds()
 
 		logger.log('Entering arbitrage monitoring loop.')
 		while True:

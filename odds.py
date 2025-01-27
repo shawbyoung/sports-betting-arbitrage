@@ -3,7 +3,7 @@ from logger import logger
 from typing import Callable
 
 def odds(
-    sportsbook: str, promotion: str, participants: list[str], spread: list[str], 
+    sportsbook: str, participants: list[str], spread: list[str], 
     total: list[str], moneyline: list[str]
 ):
     total_idx = 1

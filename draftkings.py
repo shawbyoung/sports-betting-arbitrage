@@ -1,23 +1,21 @@
 from driver import *
+import util
 
 class draftkings(driver):
 	def __init__(self):		
 		super().__init__('draftkings')
-		self.promotions = {
-			'nba'
-		}
  
 	def _login_aux(self):
 		self.driver.get('https://sports.mi.betmgm.com/en/sports')
 
-	def _get_promotion_page(self, promotion):
-		match promotion:
+	def _get_promotion_link(self) -> str:
+		match util.promotion:
 			case 'nba':
-				self.driver.get('https://sportsbook.draftkings.com/leagues/basketball/nba')
+				return 'https://sportsbook.draftkings.com/leagues/basketball/nba'
 			case _:
-				assert False, f'{promotion} undefined in {self.name}'
+				assert False, f'{util.promotion} undefined in {self.name}'
 
-	def _get_events(self, promotion: str):
+	def _get_events(self):
 		try:
 			print(f'[draftkings] searching and waiting sportbook table')
 			WebDriverWait(self.driver, 10).until(
@@ -35,18 +33,18 @@ class draftkings(driver):
 					events.append([table_rows[i], table_rows[i+1]]) 
 			return events
 		except:
-			self._log('warning', 'No events loaded.')
+			self._log('No events loaded.', 'warning')
 			return []
 
-	def _parse_event(self, promotion, event):
+	def _parse_event(self, event):
 		try:
 			participants = [team.find_element(By.CLASS_NAME, 'event-cell__name-text').text for team in event]
 		except:
-			self._log_promotion(promotion, 'error', 'Could not find participants.')
+			self._log('Could not find participants.', 'error')
 			return None
 
 		if len(participants) != 2:
-			self._log_promotion(promotion, 'error', 'Event dropped, participants len neq 2.')
+			self._log('Event dropped, participants len neq 2.', 'error')
 			return None
 
 		# if checking for len eq 3 for td's
@@ -54,4 +52,4 @@ class draftkings(driver):
 		spread = []
 		total = []
 
-		return odds(promotion, participants, spread, total, moneyline)
+		return odds(self.name, participants, spread, total, moneyline)
