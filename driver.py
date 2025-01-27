@@ -62,15 +62,11 @@ class driver:
 	# Generic function for collecting odds from a promotion after getting the 
  	# appropriate promotion link.
 	def get_odds(self):
-		print('get promo page')
 		response = self._get_promotion_page()
-		print('get events')
 		events = self._get_events()
 		odds = []
 		for event in events:
-			print('parse events')
 			event_odds = self._parse_event(event)
 			if event_odds:
 				odds.append(event_odds)
-		print('returning odds')
 		return odds

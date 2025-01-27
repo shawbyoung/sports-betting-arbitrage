@@ -17,28 +17,30 @@ class draftkings(driver):
 
 	def _get_events(self):
 		try:
-			print(f'[draftkings] searching and waiting sportbook table')
+			table_css_selector = 'tbody.sportsbook-table__body'
 			WebDriverWait(self.driver, 10).until(
-				EC.presence_of_element_located((By.CSS_SELECTOR, 'table.sportsbook-table'))
+				EC.presence_of_element_located((By.CSS_SELECTOR, table_css_selector))
 			)
 			time.sleep(1)
-			print(f'[draftkings] waited, finding elements ')
-			sportsbook_tables = self.driver.find_elements(By.CSS_SELECTOR, 'table.sportsbook-table')
+			sportsbook_tables = self.driver.find_elements(By.CSS_SELECTOR, table_css_selector)
 
-			print(f'[draftkings] processsing elements')
 			events = []
 			for table in sportsbook_tables:
 				table_rows = self.driver.find_elements(By.CSS_SELECTOR, 'tr')
-				for i in range(0, len(table_rows), 2):
+				print(f'got table_rows, len = {len(table_rows)}')
+				for i in range(1, len(table_rows)-2, 2):
 					events.append([table_rows[i], table_rows[i+1]]) 
+			
+			self._log(f'Found {len(events)} events.')
 			return events
 		except:
-			self._log('No events loaded.', 'warning')
+			self._log('Failed to load events.', 'warning')
 			return []
 
 	def _parse_event(self, event):
 		try:
-			participants = [team.find_element(By.CLASS_NAME, 'event-cell__name-text').text for team in event]
+			raw_participants = [team.find_element(By.CLASS_NAME, 'event-cell__name-text').text for team in event]
+			participants = [raw_participant.split()[1] for raw_participant in raw_participants]
 		except:
 			self._log('Could not find participants.', 'error')
 			return None
@@ -47,8 +49,12 @@ class draftkings(driver):
 			self._log('Event dropped, participants len neq 2.', 'error')
 			return None
 
-		# if checking for len eq 3 for td's
-		moneyline = [team.find_elements(By.CSS_SELECTOR, 'td[class="sportsbook-table__column-row"]')[2].text for team in event]		
+		moneyline = []
+		for team in event:
+			team_odds = team.find_elements(By.CSS_SELECTOR, 'td.sportsbook-table__column-row')
+			# if checking for len eq 3 for td's
+			moneyline.append(team_odds[2].text)
+
 		spread = []
 		total = []
 

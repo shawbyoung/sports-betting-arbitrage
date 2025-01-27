@@ -17,13 +17,16 @@ class betmgm(driver):
 
 	def _get_events(self):
 		try:
+			table_css_selector = 'grid-event-wrapper'
 			WebDriverWait(self.driver, 10).until(
-				EC.presence_of_element_located((By.CLASS_NAME, 'grid-event-wrapper'))
+				EC.presence_of_element_located((By.CLASS_NAME, table_css_selector))
 			)
 			time.sleep(1)
-			return self.driver.find_elements(By.CLASS_NAME, 'grid-event-wrapper')
+			events = self.driver.find_elements(By.CLASS_NAME, table_css_selector)
+			self._log(f'Found {len(events)} events.')
+			return events
 		except:
-			self._log('No events loaded.', 'warning')
+			self._log('Failed to load events.', 'warning')
 			return []
 
 	def _parse_event(self, event):

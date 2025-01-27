@@ -31,17 +31,12 @@ def odds(
     t2_name = participants[t2_participants_idx]
 
     event_odds = {
-        'promotion' : promotion,
         'sportsbook' : sportsbook,
         't1_name' : t1_name,
         't2_name' : t2_name
     }
 
-    print(sportsbook, spread)
-    print(sportsbook, total)
-    print(sportsbook, moneyline)
-
-    if len(spread) == 4 & spread[t1_spread_idx][1:].isnumeric() & spread[t2_spread_idx][1:].isnumeric():		
+    if len(spread) == 4:
         event_odds['t1_spread_odds'] = util.american.to_decimal(spread[t1_spread_idx])
         event_odds['t2_spread_odds'] = util.american.to_decimal(spread[t2_spread_idx])
     else:
@@ -56,7 +51,6 @@ def odds(
     else:
         logger.log_warning(f'[{sportsbook}] {t1_name}, {t2_name} event has no total info.')
 
-    # if len(moneyline) == 2 & moneyline[t1_moneyline_idx][1:].isnumeric() & moneyline[t1_moneyline_idx][1:].isnumeric():
     if len(moneyline) == 2:
         event_odds['t1_moneyline_odds'] = util.american.to_decimal(moneyline[t1_moneyline_idx])
         event_odds['t2_moneyline_odds'] = util.american.to_decimal(moneyline[t2_moneyline_idx])

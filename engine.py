@@ -49,8 +49,11 @@ class engine:
 		return results
 
 	def login(self):
-		for driver in self.drivers:
-			driver.login() 
+		def task(d: driver):
+			return d.login()
+
+		logger.log('Logging into sportsbooks.')
+		self._run_on_all_drivers(task)
 
 	def	_find_polarizing_odds(self, odds):
 		events = {}
