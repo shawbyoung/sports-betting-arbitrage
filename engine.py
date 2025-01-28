@@ -4,17 +4,23 @@ import util
 from itertools import chain
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from betmgm import betmgm
-from draftkings import draftkings 
 from driver import driver
-from hardrock import hardrock
 from logger import logger
+
+# Drivers
+from betmgm import betmgm
+from betrivers import betrivers
+from draftkings import draftkings 
+from hardrock import hardrock
 
 class engine:
 	def __init__(self):
 		self.config()
-		self.drivers = [betmgm(), draftkings()]
-
+		self.drivers = {
+			'betmgm' : betmgm(), 
+			'draftkings' : draftkings(), 
+			'betrivers' : betrivers()
+		}
 		self.login()
 		self.bet()
 		self.epilogue()
@@ -34,10 +40,14 @@ class engine:
 		util.promotion = promotion_opt	
 		logger.log(f'{util.promotion} selected as promotion.')
 
+	def _run_on_drivers(self, task, drivers):
+		# TODO: implement me for bet execution
+		pass
+
 	def _run_on_all_drivers(self, task):
 		results = {}
 		with ThreadPoolExecutor(max_workers=len(self.drivers)) as executor:
-			future_to_driver = {executor.submit(task, d): d for d in self.drivers}
+			future_to_driver = {executor.submit(task, d): d for d in self.drivers.values()}
 			for future in as_completed(future_to_driver):
 				driver_obj = future_to_driver[future]
 				try:
@@ -64,6 +74,8 @@ class engine:
 
 			if (t1_name, t2_name) not in events:
 				events[t1_name, t2_name] = {
+					't1_name' : t1_name,
+					't2_name' : t2_name,
 					't1_moneyline_odds_min' : t1_moneyline_odds,
 					't1_moneyline_odds_min_sportsbook' : sportsbook,
 					't1_moneyline_odds_max' : t1_moneyline_odds,
@@ -100,7 +112,7 @@ class engine:
 		for (t1_name, t2_name), event in events.items():
 			favorite, underdog, favorite_odds, underdog_odds = None, None, None, None
 			bet_amt = 100
-
+			print(event)
 			if util.compute_arb(event['t1_moneyline_odds_min'], event['t2_moneyline_odds_max']) < 1:
 				favorite = event['t1_name']
 				underdog = event['t2_name']

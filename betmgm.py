@@ -1,5 +1,4 @@
 from driver import *
-import util
 
 class betmgm(driver):
 	def __init__(self):		
@@ -25,8 +24,8 @@ class betmgm(driver):
 			events = self.driver.find_elements(By.CLASS_NAME, table_css_selector)
 			self._log(f'Found {len(events)} events.')
 			return events
-		except:
-			self._log('Failed to load events.', 'warning')
+		except Exception as e:
+			self._log(f'Failed to load events. {e}', 'warning')
 			return []
 
 	def _parse_event(self, event):

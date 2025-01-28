@@ -1,5 +1,4 @@
 from driver import *
-import util
 
 class draftkings(driver):
 	def __init__(self):		
@@ -27,14 +26,13 @@ class draftkings(driver):
 			events = []
 			for table in sportsbook_tables:
 				table_rows = self.driver.find_elements(By.CSS_SELECTOR, 'tr')
-				print(f'got table_rows, len = {len(table_rows)}')
 				for i in range(1, len(table_rows)-2, 2):
 					events.append([table_rows[i], table_rows[i+1]]) 
 			
 			self._log(f'Found {len(events)} events.')
 			return events
-		except:
-			self._log('Failed to load events.', 'warning')
+		except Exception as e:
+			self._log(f'Failed to load events. {e}', 'warning')
 			return []
 
 	def _parse_event(self, event):
