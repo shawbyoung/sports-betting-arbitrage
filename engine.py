@@ -112,7 +112,6 @@ class engine:
 		for (t1_name, t2_name), event in events.items():
 			favorite, underdog, favorite_odds, underdog_odds = None, None, None, None
 			bet_amt = 100
-			print(event)
 			if util.compute_arb(event['t1_moneyline_odds_min'], event['t2_moneyline_odds_max']) < 1:
 				favorite = event['t1_name']
 				underdog = event['t2_name']

@@ -14,26 +14,21 @@ class draftkings(driver):
 			case _:
 				assert False, f'{util.promotion} undefined in {self.name}'
 
-	def _get_events(self):
-		try:
-			table_css_selector = 'tbody.sportsbook-table__body'
-			WebDriverWait(self.driver, 10).until(
-				EC.presence_of_element_located((By.CSS_SELECTOR, table_css_selector))
-			)
-			time.sleep(1)
-			sportsbook_tables = self.driver.find_elements(By.CSS_SELECTOR, table_css_selector)
+	def _get_events_aux(self):
+		table_css_selector = 'tbody.sportsbook-table__body'
+		WebDriverWait(self.driver, 10).until(
+			EC.presence_of_element_located((By.CSS_SELECTOR, table_css_selector))
+		)
+		time.sleep(1)
+		sportsbook_tables = self.driver.find_elements(By.CSS_SELECTOR, table_css_selector)
 
-			events = []
-			for table in sportsbook_tables:
-				table_rows = self.driver.find_elements(By.CSS_SELECTOR, 'tr')
-				for i in range(1, len(table_rows)-2, 2):
-					events.append([table_rows[i], table_rows[i+1]]) 
-			
-			self._log(f'Found {len(events)} events.')
-			return events
-		except Exception as e:
-			self._log(f'Failed to load events. {e}', 'warning')
-			return []
+		events = []
+		for table in sportsbook_tables:
+			table_rows = self.driver.find_elements(By.CSS_SELECTOR, 'tr')
+			for i in range(1, len(table_rows)-2, 2):
+				events.append([table_rows[i], table_rows[i+1]])
+
+		return events
 
 	def _parse_event(self, event):
 		try:

@@ -15,18 +15,15 @@ class betmgm(driver):
 				assert False, f'{util.promotion} undefined in {self.name}'
 
 	def _get_events(self):
-		try:
-			table_css_selector = 'grid-event-wrapper'
-			WebDriverWait(self.driver, 10).until(
-				EC.presence_of_element_located((By.CLASS_NAME, table_css_selector))
-			)
-			time.sleep(1)
-			events = self.driver.find_elements(By.CLASS_NAME, table_css_selector)
-			self._log(f'Found {len(events)} events.')
-			return events
-		except Exception as e:
-			self._log(f'Failed to load events. {e}', 'warning')
-			return []
+		table_css_selector = 'grid-event-wrapper'
+		WebDriverWait(self.driver, 10).until(
+			EC.presence_of_element_located((By.CLASS_NAME, table_css_selector))
+		)
+		time.sleep(1)
+
+		events = self.driver.find_elements(By.CLASS_NAME, table_css_selector)
+
+		return events
 
 	def _parse_event(self, event):
 		try:

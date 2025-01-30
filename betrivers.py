@@ -15,19 +15,16 @@ class betrivers(driver):
                 assert False, f'{util.promotion} undefined in {self.name}'
 
     def _get_events(self):
-        try:
-            table_css_selector = 'div[data-testid=\'listview-group-1000093652-events-container\''            
-            WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, table_css_selector))
-            )
-            time.sleep(1)
-            events_parent_div = self.driver.find_element(By.CSS_SELECTOR, table_css_selector)
-            events = events_parent_div.find_elements(By.CSS_SELECTOR, 'article')
-            self._log(f'Found {len(events)} events.')
-            return events
-        except Exception as e:
-            self._log(f'Failed to load events. {e}', 'warning')
-            return []
+        table_css_selector = 'div[data-testid=\'listview-group-1000093652-events-container\''
+        WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, table_css_selector))
+        )
+        time.sleep(1)
+
+        events_parent_div = self.driver.find_element(By.CSS_SELECTOR, table_css_selector)
+        events = events_parent_div.find_elements(By.CSS_SELECTOR, 'article')
+
+        return events
 
     def _parse_event(self, event):
         try:

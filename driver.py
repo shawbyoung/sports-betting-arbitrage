@@ -51,9 +51,18 @@ class driver:
 		except:
 			self._log(f'Cannot get {util.promotion} page.', 'error')
 
+	def _get_events_aux(self):
+		pass
+
 	# Returns elements that represent sports events.
 	def _get_events(self):
-		pass
+		try:
+			events = self._get_events_aux()
+			self._log(f'Found {len(events)} events.')
+			return events
+		except Exception as e:
+			self._log(f'Failed to load events. {e}', 'warning')
+			return []
 
 	# Parses an element and returns odds.
 	def _parse_event(self, event):
