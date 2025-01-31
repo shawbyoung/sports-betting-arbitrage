@@ -16,6 +16,16 @@ class driver:
 		self.name = name
 		self._log(f'Initializing web driver.')
 		self.driver = webdriver.Chrome()
+		self._log(f'Initialized web driver.')
+		self.username = None
+		self.password = None
+
+	def set_password(self, password) -> None:
+		self.password = password
+
+	def set_username(self, username) -> None:
+		self.username = username
+		self._log(f'Set username = {username}.')
 
 	def driver_quit(self) -> None:
 		self._log(f'Quitting web driver.')

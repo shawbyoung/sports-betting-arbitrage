@@ -15,12 +15,12 @@ from hardrock import hardrock
 
 class engine:
 	def __init__(self):
-		self.config()
 		self.drivers = {
 			'betmgm' : betmgm(), 
 			'draftkings' : draftkings(), 
 			'betrivers' : betrivers()
 		}
+		self.config()
 		self.login()
 		self.bet()
 		self.epilogue()
@@ -32,13 +32,43 @@ class engine:
 		except:
 			logger.log_error('No config file.')
 			exit(1)
-	
+
 		promotion_opt = config.get('promotion', None) 
 		if not promotion_opt:
 			logger.log_error('No promotion in config file.')
 			exit(1)
+
 		util.promotion = promotion_opt	
 		logger.log(f'{util.promotion} selected as promotion.')
+
+		sportsbooks_opt = config.get('sportsbooks', None)
+		if not sportsbooks_opt:
+			logger.log_error('No sportsbook information (username, password) in config file.')
+			exit(1)
+
+		for sportsbook_config in sportsbooks_opt:
+			sportsbook = sportsbook_config.get('sportsbook', None)
+			username = sportsbook_config.get('username', None)
+			password = sportsbook_config.get('password', None)
+
+			if not sportsbook:
+				logger.log_error(f'No identifying sportsbook in sportsbook config entry.')
+				exit(1)
+
+			if sportsbook not in self.drivers:
+				logger.log_error(f'{sportsbook} not in sportsbooks.')
+				exit(1)
+
+			if not username:
+				logger.log_error(f'No username in {sportsbook_name} config .')
+				exit(1)
+
+			if not password:
+				logger.log_error(f'No password in {sportsbook_name} config .')
+				exit(1)
+
+			self.drivers[sportsbook].set_username(username)
+			self.drivers[sportsbook].password = password
 
 	def _run_on_drivers(self, task, drivers):
 		# TODO: implement me for bet execution
@@ -165,6 +195,6 @@ class engine:
 			self._find_arbitrage(list(chain.from_iterable(results.values())))
 			idx += 1
 
-	def epilogue(epilogue, sportsbooks):
-		for sportsbook in sportsbooks:
+	def epilogue(self):
+		for sportsbook in self.drivers.values():
 			sportsbook.driver_quit()
