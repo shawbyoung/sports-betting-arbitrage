@@ -1,4 +1,5 @@
 import json
+import time
 import util
 
 from itertools import chain
@@ -24,6 +25,15 @@ class engine:
 		self.login()
 		self.bet()
 		self.epilogue()
+
+	def drop_sportsbook(self, sportsbook):
+		if sportsbook not in self.drivers:
+			logger.log(f'{sportsbook} not in drivers, unable to drop.')
+			return
+
+		self.drivers[sportsbook].driver_quit()
+		del self.drivers[sportsbook]
+		logger.log(f'Dropping sportbook {sportsbook}')
 
 	def config(self):
 		try:
@@ -91,9 +101,11 @@ class engine:
 	def login(self):
 		def task(d: driver):
 			return d.login()
-
 		logger.log('Logging into sportsbooks.')
-		self._run_on_all_drivers(task)
+		login_err = self._run_on_all_drivers(task)
+		dead_sportsbooks = [sportbook.name for sportbook, err in login_err.items() if err == True]
+		for dead_sportsbook in dead_sportsbooks:
+			self.drop_sportsbook(dead_sportsbook)
 
 	def	_find_polarizing_odds(self, odds):
 		events = {}

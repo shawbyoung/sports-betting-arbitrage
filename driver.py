@@ -4,8 +4,10 @@ import util
 from itertools import chain
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+
 from typing import Callable
 
 from logger import logger
@@ -15,7 +17,11 @@ class driver:
 	def __init__(self, name):
 		self.name = name
 		self._log(f'Initializing web driver.')
-		self.driver = webdriver.Chrome()
+		options = Options()
+		options.add_experimental_option("excludeSwitches", ["enable-automation"])
+		options.add_experimental_option('useAutomationExtension', False)
+		options.binary_location = 'env/lib/python3.12/site-packages/selenium/webdriver/chrome'
+		self.driver = webdriver.Chrome(options=options)
 		self._log(f'Initialized web driver.')
 		self.username = None
 		self.password = None
@@ -31,7 +37,7 @@ class driver:
 		self._log(f'Quitting web driver.')
 		self.driver.quit()
 
-	def _log(self, message: str = None, log_type: str | None = None, level: int | None = None) -> None:
+	def _log(self, message: str = '', log_type: str | None = None, level: int | None = None) -> None:
 		log_fn_str = f'log_{log_type}' if log_type else 'log'
 		log_fn = getattr(logger, log_fn_str, None)
 		assert log_fn, '"log"\'s type should be defined.'
@@ -45,10 +51,16 @@ class driver:
 	def _login_aux(self) -> None:
 		self.driver.get('www.example.com')
 
-	def login(self) -> None:
+	def login(self) -> bool:
 		self._log(f'Logging in.')
-		self._login_aux()
+		try:
+			self._login_aux()
+		except Exception as e:
+			self._log(f'Failed to log in. {e}')
+			return True
+
 		self._log(f'Logged in.')
+		return False
 
 	def _get_promotion_link(self):
 		pass
