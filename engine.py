@@ -1,5 +1,6 @@
 import json
 import time
+import os
 import util
 
 from itertools import chain
@@ -16,15 +17,19 @@ from hardrock import hardrock
 
 class engine:
 	def __init__(self):
+		self.initalize_drivers()
+		self.config()
+		self.login()
+		self.bet()
+		self.epilogue()
+
+	def initalize_drivers(self):
+		os.environ['webdriver.chrome.driver'] = 'windows_executable/chromedriver.exe'
 		self.drivers = {
 			'betmgm' : betmgm(), 
 			'draftkings' : draftkings(), 
 			'betrivers' : betrivers()
 		}
-		self.config()
-		self.login()
-		self.bet()
-		self.epilogue()
 
 	def drop_sportsbook(self, sportsbook):
 		if sportsbook not in self.drivers:
