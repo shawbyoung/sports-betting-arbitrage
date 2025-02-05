@@ -70,11 +70,11 @@ class engine:
 				exit(1)
 
 			if not username:
-				logger.log_error(f'No username in {sportsbook_name} config .')
+				logger.log_error(f'No username in {sportsbook} config .')
 				exit(1)
 
 			if not password:
-				logger.log_error(f'No password in {sportsbook_name} config .')
+				logger.log_error(f'No password in {sportsbook} config .')
 				exit(1)
 
 			self.drivers[sportsbook].set_username(username)
