@@ -16,15 +16,17 @@ from odds import odds
 class driver:
 	def __init__(self, name):
 		self.name = name
+		self.username = None
+		self.password = None
+		self.initialize_webdriver()
+
+	def initialize_webdriver(self) -> None:
 		self._log(f'Initializing web driver.')
 		options = Options()
 		options.add_experimental_option("excludeSwitches", ["enable-automation"])
 		options.add_experimental_option('useAutomationExtension', False)
-		options.binary_location = 'env/lib/python3.12/site-packages/selenium/webdriver/chrome'
 		self.driver = webdriver.Chrome(options=options)
 		self._log(f'Initialized web driver.')
-		self.username = None
-		self.password = None
 
 	def set_password(self, password) -> None:
 		self.password = password
