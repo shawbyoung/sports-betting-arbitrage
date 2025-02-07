@@ -23,9 +23,11 @@ class driver:
 	def initialize_webdriver(self) -> None:
 		self._log(f'Initializing web driver.')
 		options = Options()
+		options.add_argument('--disable-blink-features=AutomationControlled')
 		options.add_experimental_option("excludeSwitches", ["enable-automation"])
 		options.add_experimental_option('useAutomationExtension', False)
 		self.driver = webdriver.Chrome(options=options)
+		self.driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
 		self._log(f'Initialized web driver.')
 
 	def set_password(self, password) -> None:
