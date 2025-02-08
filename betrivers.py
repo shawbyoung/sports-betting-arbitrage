@@ -8,20 +8,18 @@ class betrivers(driver):
         self.driver.get('https://mi.betrivers.com/?page=sportsbook&feed=featured#home')
         login_button = self.driver.find_element(By.XPATH, "//button[text()='Login']")
 
-        time.sleep(util.random_normal.short_interaction_time())
+        time.sleep(util.simulate.short_interaction_time())
         login_button.click()
 
-        time.sleep(util.random_normal.long_interaction_time())
+        time.sleep(util.simulate.long_interaction_time())
         username_input = self.driver.find_element(By.ID, "login-form-modal-email")
-        username_input.clear()
-        username_input.send_keys(self.username)
+        util.simulate.type_in_field(username_input, self.username)
 
-        time.sleep(util.random_normal.long_interaction_time())
+        time.sleep(util.simulate.long_interaction_time())
         password_input = self.driver.find_element(By.ID, "login-form-modal-password")
-        password_input.clear()
-        password_input.send_keys(self.password)
+        util.simulate.type_in_field(password_input, self.password)
 
-        time.sleep(util.random_normal.short_interaction_time())
+        time.sleep(util.simulate.short_interaction_time())
         submit_login_button = self.driver.find_element(By.ID, "login-form-modal-submit")
         submit_login_button.click()
 
