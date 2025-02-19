@@ -5,7 +5,17 @@ class draftkings(driver):
 		super().__init__('draftkings')
  
 	def _login_aux(self):
-		self.driver.get('https://sports.mi.betmgm.com/en/sports')
+		self.driver.get('https://myaccount.draftkings.com/login')
+		username_input = self.driver.find_element(By.ID, 'login-username-input')
+		util.simulate.short_interaction_time()
+		util.simulate.type_in_field(username_input, self.username)
+
+		password_input = self.driver.find_element(By.ID, "login-password-input")
+		util.simulate.short_interaction_time()
+		util.simulate.type_in_field(password_input, self.password)
+
+		submit_login_button = self.driver.find_element(By.ID, 'login-submit')
+		util.simulate.click_short_wait(submit_login_button)
 
 	def _get_promotion_link(self) -> str:
 		match util.promotion:
