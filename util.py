@@ -1,8 +1,10 @@
 import numpy as np
+import scipy.stats as stats
 import time
 
 promotion = None
 user_profile_dir = None
+user_profile = None
 
 class american:
     def to_decimal(odds: str) -> float:
@@ -14,18 +16,27 @@ def compute_arb(t1_odds, t2_odds):
     return (1/t1_odds) + (1/t2_odds)
 
 class simulate:
-    time_arr_len = 100
+    _t_arr_len = 100
 
-    type_char_interaction_times = np.random.normal(0.150, 0.050, time_arr_len)
-    type_char_interaction_time_idx = 0
+    _type_t_mu, _type_t_sig = 0.15, 0.05
+    _type_t_l, _type_t_u = 0, 0.3 
+    _type_t = stats.truncnorm((_type_t_l - _type_t_mu) / _type_t_sig, (_type_t_u - _type_t_mu) / _type_t_sig, loc=_type_t_mu, scale=_type_t_sig).rvs(_t_arr_len)
+    _type_t_idx = 0
 
-    short_interaction_times = np.random.normal(1.5, 0.25, time_arr_len)
-    short_interaction_time_idx = 0
+    _short_t_mu, _short_t_sig = 1.5, 0.25
+    _short_t_l, _short_t_u = 0.75, 2.25
+    _short_t = stats.truncnorm((_short_t_l - _short_t_mu) / _short_t_sig, (_short_t_u - _short_t_mu) / _short_t_sig, loc=_short_t_mu, scale=_short_t_sig).rvs(_t_arr_len)
+    _short_t_idx = 0
 
-    long_interaction_times = np.random.normal(3.5, 0.40, time_arr_len)
-    long_interaction_time_idx = 0
+    _long_t_mu, _long_t_sig = 3.5, 0.5
+    _long_t_l, long_t_u = 2.5, 5
+    _long_t = np.random.normal(3.5, 0.50, _t_arr_len)
+    _long_t_idx = 0
 
     # TODO: explore conditional waits via selenium.
+    def exact_wait(t):
+        time.sleep(t)
+
     def click_short_wait(element):
         time.sleep(simulate.short_interaction_time())
         element.click()
@@ -47,18 +58,18 @@ class simulate:
             input_element.send_keys(c)
 
     def type_char_interaction_time() -> float:
-        t = simulate.type_char_interaction_times[simulate.type_char_interaction_time_idx]
-        simulate.type_char_interaction_time_idx = (simulate.type_char_interaction_time_idx + 1) % simulate.time_arr_len
+        t = simulate._type_t[simulate._type_t_idx]
+        simulate._type_t_idx = (simulate._type_t_idx + 1) % simulate._t_arr_len
         return t
 
     def short_interaction_time() -> float:
-        t = simulate.short_interaction_times[simulate.short_interaction_time_idx]
-        simulate.short_interaction_time_idx = (simulate.short_interaction_time_idx + 1) % simulate.time_arr_len
+        t = simulate._short_t[simulate._short_t_idx]
+        simulate._short_t_idx = (simulate._short_t_idx + 1) % simulate._t_arr_len
         return t
 
     def long_interaction_time() -> float:
-        t = simulate.long_interaction_times[simulate.long_interaction_time_idx]
-        simulate.long_interaction_time_idx = (simulate.long_interaction_time_idx + 1) % simulate.time_arr_len
+        t = simulate._long_t[simulate._long_t_idx]
+        simulate._long_t_idx = (simulate._long_t_idx + 1) % simulate._t_arr_len
         return t
 
     def get(center, std):
