@@ -1,7 +1,8 @@
 import numpy as np
 import time
 
-promotion = 'undefined'
+promotion = None
+user_profile_dir = None
 
 class american:
     def to_decimal(odds: str) -> float:
@@ -15,7 +16,7 @@ def compute_arb(t1_odds, t2_odds):
 class simulate:
     time_arr_len = 100
 
-    type_char_interaction_times = np.random.normal(0.150, 0.25, time_arr_len)
+    type_char_interaction_times = np.random.normal(0.150, 0.050, time_arr_len)
     type_char_interaction_time_idx = 0
 
     short_interaction_times = np.random.normal(1.5, 0.25, time_arr_len)
@@ -23,6 +24,21 @@ class simulate:
 
     long_interaction_times = np.random.normal(3.5, 0.40, time_arr_len)
     long_interaction_time_idx = 0
+
+    # TODO: explore conditional waits via selenium.
+    def click_short_wait(element):
+        time.sleep(simulate.short_interaction_time())
+        element.click()
+
+    def click_long_wait(element):
+        time.sleep(simulate.long_interaction_time())
+        element.click()
+
+    def short_wait():
+        time.sleep(simulate.short_interaction_time())
+
+    def long_wait():
+        time.sleep(simulate.long_interaction_time())
 
     def type_in_field(input_element, text) -> float:
         input_element.clear()

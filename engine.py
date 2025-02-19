@@ -19,12 +19,13 @@ class engine:
 	def __init__(self):
 		self.initalize_drivers()
 		self.config()
+
+	def run(self):
 		self.login()
 		self.bet()
 		self.epilogue()
 
 	def initalize_drivers(self):
-		os.environ['webdriver.chrome.driver'] = 'windows_executable/chromedriver.exe'
 		self.drivers = {
 			'betmgm' : betmgm(), 
 			'draftkings' : draftkings(), 
@@ -53,7 +54,7 @@ class engine:
 			logger.log_error('No promotion in config file.')
 			exit(1)
 
-		util.promotion = promotion_opt	
+		util.promotion = promotion_opt
 		logger.log(f'{util.promotion} selected as promotion.')
 
 		sportsbooks_opt = config.get('sportsbooks', None)
@@ -71,8 +72,8 @@ class engine:
 				exit(1)
 
 			if sportsbook not in self.drivers:
-				logger.log_error(f'{sportsbook} not in sportsbooks.')
-				exit(1)
+				logger.log_warning(f'{sportsbook} not in sportsbooks.')
+				continue
 
 			if not username:
 				logger.log_error(f'No username in {sportsbook} config .')

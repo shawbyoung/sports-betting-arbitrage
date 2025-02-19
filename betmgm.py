@@ -5,7 +5,17 @@ class betmgm(driver):
 		super().__init__('betmgm')
  
 	def _login_aux(self):
-		self.driver.get('https://sports.mi.betmgm.com/en/sports')
+		self.driver.get('https://www.mi.betmgm.com/en/labelhost/login')
+		username_input = self.driver.find_element(By.ID, "userId")
+		util.simulate.short_interaction_time()
+		util.simulate.type_in_field(username_input, self.username)
+
+		password_input = self.driver.find_element(By.NAME, "password")
+		util.simulate.short_interaction_time()
+		util.simulate.type_in_field(password_input, self.password)
+
+		submit_login_button = self.driver.find_element(By.XPATH, '//*[@id="login"]/form/fieldset/section/div/button')
+		util.simulate.click_short_wait(submit_login_button)
 
 	def _get_promotion_link(self) -> str:
 		match util.promotion:

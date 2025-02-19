@@ -4,6 +4,7 @@ import util
 from itertools import chain
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
@@ -22,20 +23,24 @@ class driver:
 
 	def initialize_webdriver(self) -> None:
 		self._log(f'Initializing web driver.')
+		service = Service(executable_path='chromedriver/chromedriver.exe')
 		options = Options()
-		options.add_argument("--disable-blink-features")
+		user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0"
+		options.add_argument(f"user-agent={user_agent}")
+		options.binary_location = 'chrome/chrome-win64/chrome.exe'
+		options.add_argument('--disable-blink-features')
 		options.add_argument('--disable-blink-features=AutomationControlled')
 		options.add_experimental_option("excludeSwitches", ["enable-automation"])
 		options.add_experimental_option('useAutomationExtension', False)
-		self.driver = webdriver.Chrome(options=options)
+		self.driver = webdriver.Chrome(service=service, options=options)
 		self.driver.execute_script(
 			"Object.defineProperty(navigator, 'webdriver', {"
 				"get: () => undefined"
 			"})"
 		)
-		webdriver = driver.execute_cdp_cmd("navigator.webdriver")
-		if webdriver != 'undefined':
-			self._log('Webdriver NOT set to undefined. Detection possible.')
+		navigator_webdriver = self.driver.execute_script("return navigator.webdriver;")
+		if navigator_webdriver:
+			self._log(f'Webdriver NOT set to undefined, set to {navigator_webdriver}. Detection possible.')
 		self._log(f'Initialized web driver.')
 
 	def set_password(self, password) -> None:
@@ -52,7 +57,7 @@ class driver:
 	def _log(self, message: str = '', log_type: str | None = None, level: int | None = None) -> None:
 		log_fn_str = f'log_{log_type}' if log_type else 'log'
 		log_fn = getattr(logger, log_fn_str, None)
-		assert log_fn, '"log"\'s type should be defined.'
+		assert log_fn, '"log"\'s types should be defined.'
 
 		if not level:
 			log_fn(f'[{self.name}] {message}')
@@ -81,7 +86,9 @@ class driver:
 	# Logs an error if the page is unreachable.
 	def _get_promotion_page(self):
 		try:
-			self.driver.get(self._get_promotion_link())
+			link = self._get_promotion_link()
+			if link != driver.current_url:
+				self.driver.get(self._get_promotion_link())
 		except:
 			self._log(f'Cannot get {util.promotion} page.', 'error')
 

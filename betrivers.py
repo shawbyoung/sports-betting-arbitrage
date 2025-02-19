@@ -7,21 +7,18 @@ class betrivers(driver):
     def _login_aux(self):
         self.driver.get('https://mi.betrivers.com/?page=sportsbook&feed=featured#home')
         login_button = self.driver.find_element(By.XPATH, "//button[text()='Login']")
+        util.simulate.click_short_wait(login_button)
 
-        time.sleep(util.simulate.short_interaction_time())
-        login_button.click()
-
-        time.sleep(util.simulate.long_interaction_time())
         username_input = self.driver.find_element(By.ID, "login-form-modal-email")
+        util.simulate.short_wait()
         util.simulate.type_in_field(username_input, self.username)
 
-        time.sleep(util.simulate.long_interaction_time())
         password_input = self.driver.find_element(By.ID, "login-form-modal-password")
+        util.simulate.short_wait()
         util.simulate.type_in_field(password_input, self.password)
 
-        time.sleep(util.simulate.short_interaction_time())
         submit_login_button = self.driver.find_element(By.ID, "login-form-modal-submit")
-        submit_login_button.click()
+        util.simulate.click_short_wait(submit_login_button)
 
     def _get_promotion_link(self) -> str:
         match util.promotion:
