@@ -2,66 +2,55 @@ import util
 from logger import logger
 from typing import Callable
 
-def odds(
-    sportsbook: str, participants: list[str], spread: list[str], 
-    total: list[str], moneyline: list[str]
-):
-    total_idx = 1
-
-    if participants[0] < participants[1]:
-        t1_participants_idx = 0
-        t2_participants_idx = 1
-        t1_spread_idx = 1
-        t2_spread_idx = 3
-        t1_total_idx = 2
-        t2_total_idx = 5
-        t1_moneyline_idx = 0
-        t2_moneyline_idx = 1
-    else:
-        t1_participants_idx = 1
-        t2_participants_idx = 0
-        t1_spread_idx = 3
-        t2_spread_idx = 1
-        t1_total_idx = 5
-        t2_total_idx = 2
-        t1_moneyline_idx = 1
-        t2_moneyline_idx = 0
-
-    t1_name = participants[t1_participants_idx]
-    t2_name = participants[t2_participants_idx]
-
-    event_odds = {
-        'sportsbook' : sportsbook,
-        't1_name' : t1_name,
-        't2_name' : t2_name
-    }
-
-    # TODO: consider dropping unnecessary information.
-    # if len(spread) == 4:
-    #     event_odds['t1_spread_odds'] = util.american.to_decimal(spread[t1_spread_idx])
-    #     event_odds['t2_spread_odds'] = util.american.to_decimal(spread[t2_spread_idx])
-    # else:
-    #     logger.log_warning(f'[{sportsbook}] {t1_name}, {t2_name} event has no valid spread info.')
-
-    # add some form of checking for odds format.
-    # if len(total) == 6:
-    #     event_odds['total_score'] = total[total_idx]
-    #     event_odds['t1_total_odds'] = util.american.to_decimal(total[t1_total_idx])
-    #     event_odds['t2_total_odds'] = util.american.to_decimal(total[t2_total_idx])
-    # else:
-    #     logger.log_warning(f'[{sportsbook}] {t1_name}, {t2_name} event has no total info.')
-
-    if len(moneyline) == 2:
-        if not moneyline[t1_moneyline_idx][1:].isnumeric():
-            logger.log_warning(f'[{sportsbook}] {t1_name} moneyline info isn\'t numeric, ({moneyline[t1_moneyline_idx]}) dropping.')
+'''
+Represents the moneyline odds for an event, immutable.
+'''
+class odds:
+    def construct_odds(sportsbook: str, participants: list[str], moneyline: list[str]):
+        if len(participants) != 2:
+            logger.log_warning(f'len(participants) != 2. {participants}.')
             return None
-        if not moneyline[t2_moneyline_idx][1:].isnumeric():
-            logger.log_warning(f'[{sportsbook}] {t2_name} moneyline info isn\'t numeric, ({moneyline[t2_moneyline_idx]}) dropping.')
-            return None
-        event_odds['t1_moneyline_odds'] = util.american.to_decimal(moneyline[t1_moneyline_idx])
-        event_odds['t2_moneyline_odds'] = util.american.to_decimal(moneyline[t2_moneyline_idx])
-    else:
-        logger.log_warning(f'[{sportsbook}] {t1_name}, {t2_name} event has no moneyline info, dropping.')
-        return None
 
-    return event_odds
+        if len(moneyline) != 2:
+            logger.log_warning(f'[{sportsbook}] event has invalid moneyline info {moneyline}, dropping.')
+            return None
+
+        for odd in moneyline:
+            if not odd[1:].isnumeric():
+                logger.log_warning(f'[{sportsbook}] event has invalid moneyline info {moneyline}, dropping.')
+                return None
+
+        return odds(sportsbook, participants, moneyline)
+
+    def __init__(self, sportsbook: str, participants: list[str], moneyline: list[str]):
+        if participants[0] < participants[1]:
+            t1_participants_idx = 0
+            t2_participants_idx = 1
+            t1_moneyline_idx = 0
+            t2_moneyline_idx = 1
+        else:
+            t1_participants_idx = 1
+            t2_participants_idx = 0
+            t1_moneyline_idx = 1
+            t2_moneyline_idx = 0
+
+        self._sportsbook: str = sportsbook
+        self._t1_name: str = participants[t1_participants_idx]
+        self._t2_name: str = participants[t2_participants_idx]
+        self._t1_odds: float = util.american.to_decimal(moneyline[t1_moneyline_idx])
+        self._t2_odds: float = util.american.to_decimal(moneyline[t2_moneyline_idx])
+
+    def get_sportsbook(self) -> str:
+        return self._sportsbook
+
+    def get_t1_name(self) -> str:
+        return self._t1_name
+
+    def get_t2_name(self) -> str:
+        return self._t2_name
+
+    def get_t1_odds(self) -> str:
+        return self._t1_odds
+
+    def get_t2_odds(self) -> str:
+        return self._t2_odds
