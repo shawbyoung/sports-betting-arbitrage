@@ -61,4 +61,4 @@ class betmgm(driver):
 	def _construct_odds(self, participants_wrapper, betting_categories_wrapper) -> odds | None:
 		participants = [participant_div.text for participant_div in participants_wrapper]
 		moneyline = betting_categories_wrapper[2].text.split()
-		return odds.construct_odds(self.name, participants, moneyline)
+		return odds.construct_odds(self.get_name(), participants, moneyline)
