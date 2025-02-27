@@ -7,6 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 promotion = None
+# TODO: make these constant, ie return from func instead of mutable var, like promotion.
 chromedriver_path = 'chromedriver/chromedriver.exe'
 max_login_retries = 2
 
