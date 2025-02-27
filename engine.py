@@ -133,13 +133,14 @@ class engine:
 		return results
 
 	def _run_on_all_drivers(self, task):
-		return self._run_on_drivers(self.drivers.values())
+		return self._run_on_drivers(task, self.drivers.values())
+
+	def _login(d: driver):
+		return d.login()
 
 	def login(self):
-		def task(d: driver):
-			return d.login()
 		logger.log('Logging into sportsbooks.')
-		login_success = self._run_on_all_drivers(task)
+		login_success = self._run_on_all_drivers(engine._login)
 		dead_sportsbooks = [sportbook.get_name() for sportbook, success in login_success.items() if success == False]
 		for dead_sportsbook in dead_sportsbooks:
 			self.drop_sportsbook(dead_sportsbook)
