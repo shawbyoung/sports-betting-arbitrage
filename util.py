@@ -28,8 +28,20 @@ class american:
         prefix: str = odds[0]
         return (n + 100)/100 if prefix == '+' else (n + 100)/n
 
-def compute_arb(t1_odds, t2_odds):
-    return (1/t1_odds) + (1/t2_odds)
+def compute_profit(t1_odds: float, t2_odds: float) -> float:
+    return (1.0/((1.0/t1_odds) + (1.0/t2_odds))) - 1
+
+def compute_favorite_wager(bet_amt: float, favorite_odds: float, underdog_odds: float) -> float:
+    return bet_amt / ((favorite_odds/underdog_odds) + 1.0)
+
+def compute_underdog_wager(bet_amt: float, favorite_odds: float, underdog_odds: float) -> float:
+    return (bet_amt * favorite_odds) / (favorite_odds + underdog_odds)
+
+def round_wager(wager: float) -> int:
+    return int(wager)
+
+def compute_winnings(t1_wager: int, t1_odds: float, t2_wager: int, t2_odds: float) -> float:
+    return (t1_wager * t1_odds) + (t2_wager * t2_odds) - t1_wager - t2_wager
 
 class simulate:
     _t_arr_len = 100
