@@ -42,7 +42,7 @@ class betrivers(driver):
             case 'nba':
                 return 'https://mi.betrivers.com/?page=sportsbook&group=1000093652&type=matches#home'
             case _:
-                assert False, f'{util.promotion} undefined in {self.name}'
+                assert False, f'{util.promotion} undefined in {self.get_name()}'
 
     def _get_events_aux(self):
         table_css_selector = 'div[data-testid=\'listview-group-1000093652-events-container\''
@@ -67,7 +67,7 @@ class betrivers(driver):
         betting_categories_wrapper = (event_elements[3]).find_element(By.XPATH, './div').find_elements(By.XPATH, './div')
         return participants_wrapper, betting_categories_wrapper
 
-    def _parse_event(self, event):
+    def _parse_event(self, event) -> odds:
         # TODO: fix how participants are parsed, we were parsing "Trail" for some portland trailblazer game.
         participants_wrapper, betting_categories_wrapper = self._strip_event(event)
 
@@ -81,11 +81,9 @@ class betrivers(driver):
             self._log('Event dropped, participants len neq 2.', 'warning')
             return None
 
-        spread = betting_categories_wrapper[0].text.split()
-        total = betting_categories_wrapper[2].text.split()
         moneyline = betting_categories_wrapper[1].text.split()
 
-        return odds(self.name, participants, spread, total, moneyline)
+        return odds.construct_odds(self._name, participants, moneyline)
 
     def _get_moneyline_bet_button(self, event, team):
         participants_wrapper, betting_categories_wrapper = self._strip_event(event)
