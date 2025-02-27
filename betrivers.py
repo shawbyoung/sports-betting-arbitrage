@@ -67,7 +67,7 @@ class betrivers(driver):
         betting_categories_wrapper = (event_elements[3]).find_element(By.XPATH, './div').find_elements(By.XPATH, './div')
         return participants_wrapper, betting_categories_wrapper
 
-    def _parse_event(self, event) -> odds:
+    def _parse_event(self, event) -> odds | None:
         # TODO: fix how participants are parsed, we were parsing "Trail" for some portland trailblazer game.
         participants_wrapper, betting_categories_wrapper = self._strip_event(event)
 

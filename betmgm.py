@@ -48,7 +48,7 @@ class betmgm(driver):
 		events = self.driver.find_elements(By.CLASS_NAME, table_css_selector)
 		return events
 
-	def _parse_event(self, event) -> odds:
+	def _parse_event(self, event) -> odds | None:
 		try:
 			info = event.find_element(By.CLASS_NAME, 'grid-info-wrapper')
 			participants = [participant_div.text for participant_div in info.find_elements(By.CLASS_NAME, 'participant')]

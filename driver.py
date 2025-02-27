@@ -145,7 +145,7 @@ class driver:
 			return []
 
 	# Parses an element and returns odds.
-	def _parse_event(self, event) -> odds:
+	def _parse_event(self, event) -> odds | None:
 		pass
 
 	# Generic function for collecting odds from a promotion after getting the 
