@@ -60,11 +60,11 @@ class betrivers(driver):
         try:
             event_elements = event.find_element(By.XPATH, './div').find_elements(By.XPATH, './div')[0].find_elements(By.XPATH, './div')[0].find_elements(By.XPATH, './div')
             participants_wrapper = (event_elements[1]).find_element(By.XPATH, './div').find_element(By.XPATH, './div').find_elements(By.XPATH, './div')
+            betting_categories_wrapper = (event_elements[3]).find_element(By.XPATH, './div').find_elements(By.XPATH, './div')
         except Exception as e:
-            self._log(f'Could not find participants. {e}', 'error')
+            self._log(f'Event could not be stripped. {e}', 'error')
             return None, None
 
-        betting_categories_wrapper = (event_elements[3]).find_element(By.XPATH, './div').find_elements(By.XPATH, './div')
         return participants_wrapper, betting_categories_wrapper
 
     def _parse_event(self, event) -> odds | None:
@@ -79,6 +79,10 @@ class betrivers(driver):
 
         if len(participants) != 2:
             self._log('Event dropped, participants len neq 2.', 'warning')
+            return None
+
+        if len(betting_categories_wrapper) != 3:
+            self._log('Event dropped, betting_categories_wrapper len neq 3.', 'warning')
             return None
 
         moneyline = betting_categories_wrapper[1].text.split()
