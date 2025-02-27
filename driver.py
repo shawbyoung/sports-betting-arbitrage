@@ -144,9 +144,31 @@ class driver:
 			self._log(f'Failed to load events. {e}', 'warning')
 			return []
 
+	# Strips an event down to a participants_wrapper and a betting_categories_wrapper.
+	def _strip_event(self, event):
+		pass
+
+	# Constructs an odds object (or returns None) from a participants_wrapper and a betting_categories_wrapper.
+	def _construct_odds(self, participants_wrapper, betting_categories_wrapper) -> odds | None:
+		pass
+
 	# Parses an element and returns odds.
 	def _parse_event(self, event) -> odds | None:
-		pass
+		participants_wrapper, betting_categories_wrapper = self._strip_event(event)
+
+		if not participants_wrapper or not betting_categories_wrapper:
+			self._log('Event dropped, _strip_event returned None for at least one of participants_wrapper, betting_categories_wrapper.', 'warning')
+			return None
+
+		if len(participants_wrapper) != 2:
+			self._log('Event dropped, participants len neq 2.', 'warning')
+			return None
+
+		if len(betting_categories_wrapper) != 3:
+			self._log('Event dropped, betting_categories_wrapper len neq 3.', 'warning')
+			return None
+
+		return self._construct_odds(participants_wrapper, betting_categories_wrapper)
 
 	# Generic function for collecting odds from a promotion after getting the 
  	# appropriate promotion link.
@@ -170,7 +192,7 @@ class driver:
 		return None
 
 	def _get_moneyline_bet_button(self, event, team):
-		return None
+		pass
 
 	def execute_bet(self) -> bool:
 		if not self._active_bet_request:

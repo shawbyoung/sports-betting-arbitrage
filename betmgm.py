@@ -58,23 +58,7 @@ class betmgm(driver):
 
 		return participants_wrapper, betting_categories_wrapper
 
-	def _parse_event(self, event) -> odds | None:
-		participants_wrapper, betting_categories_wrapper = self._strip_event(event)
-
-		if not participants_wrapper or not betting_categories_wrapper:
-			self._log('Event dropped, _strip_event returned None for at least one of participants_wrapper, betting_categories_wrapper.', 'warning')
-			return None
-
+	def _construct_odds(self, participants_wrapper, betting_categories_wrapper) -> odds | None:
 		participants = [participant_div.text for participant_div in participants_wrapper]
-
-		if len(participants) != 2:
-			self._log('Event dropped, participants len neq 2.', 'warning')
-			return None
-		
-		if len(betting_categories_wrapper) != 3:
-			self._log('Event dropped, betting_categories_wrapper len neq 3.', 'warning')
-			return None
-
 		moneyline = betting_categories_wrapper[2].text.split()
-
 		return odds.construct_odds(self.name, participants, moneyline)
