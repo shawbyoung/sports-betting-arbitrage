@@ -5,17 +5,31 @@ class betmgm(driver):
 		super().__init__('betmgm')
  
 	def _login_aux(self):
+		wait_time = 5
 		self.driver.get('https://www.mi.betmgm.com/en/labelhost/login')
+
+		username_input_by, username_input_value = By.ID, "userId"
+		password_input_by, password_input_value = By.NAME, "password"
+		submit_button_by, submit_button_value = By.XPATH, '//*[@id="login"]/form/fieldset/section/div/button'
+		util.simulate.wait_for_element(self.driver, wait_time, username_input_by, username_input_value)
+		util.simulate.wait_for_element(self.driver, wait_time, password_input_by, password_input_value)
+		util.simulate.wait_for_element(self.driver, wait_time, submit_button_by, submit_button_value)
+
 		username_input = self.driver.find_element(By.ID, "userId")
-		util.simulate.short_interaction_time()
-		util.simulate.type_in_field(username_input, self.username)
-
 		password_input = self.driver.find_element(By.NAME, "password")
-		util.simulate.short_interaction_time()
-		util.simulate.type_in_field(password_input, self.password)
+		submit_button = self.driver.find_element(By.XPATH, '//*[@id="login"]/form/fieldset/section/div/button')
 
-		submit_login_button = self.driver.find_element(By.XPATH, '//*[@id="login"]/form/fieldset/section/div/button')
-		util.simulate.click_short_wait(submit_login_button)
+		'''
+		Interacts with page to activate submission button if cookies have loaded in username and password.
+		Greedily clicks login button if enabled assuming cookies have loaded in username and password.
+		'''
+		util.simulate.click_short_wait(password_input)
+		if not submit_button.get_attribute("disabled"):
+			self._log('Assuming cookies have loaded in username and password - submitting login form.')
+			util.simulate.click_short_wait(submit_button)
+		else:
+			self._login_form_entry(username_input, password_input, submit_button)
+		util.simulate.exact_wait(5)
 
 	def _get_promotion_link(self) -> str:
 		match util.promotion:
@@ -24,7 +38,7 @@ class betmgm(driver):
 			case _:
 				assert False, f'{util.promotion} undefined in {self.name}'
 
-	def _get_events(self):
+	def _get_events_aux(self):
 		table_css_selector = 'grid-event-wrapper'
 		WebDriverWait(self.driver, 10).until(
 			EC.presence_of_element_located((By.CLASS_NAME, table_css_selector))
@@ -32,7 +46,6 @@ class betmgm(driver):
 		time.sleep(1)
 
 		events = self.driver.find_elements(By.CLASS_NAME, table_css_selector)
-
 		return events
 
 	def _parse_event(self, event):
