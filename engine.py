@@ -124,6 +124,8 @@ class engine:
 					results[driver_obj] = future.result()
 				except Exception as e:
 					logger.log_error(f"Error with driver {driver_obj}: {e}")
+					# TODO: Change `results[driver_obj]` back to None and add smth to handle that in
+					# bet so that _run_on_all_drivers returns output that's handle-able by a multitude of tasks.
 					results[driver_obj] = []
 
 		return results
