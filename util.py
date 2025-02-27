@@ -7,7 +7,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 promotion = None
-profiles_dir = r"C:\Users\shawb\AppData\Local\Google\Chrome\User Data\\"
 chromedriver_path = 'chromedriver/chromedriver.exe'
 max_login_retries = 2
 
