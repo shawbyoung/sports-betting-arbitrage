@@ -13,19 +13,27 @@ from typing import Callable
 
 from logger import logger
 from odds import odds
+from bet_request import bet_request
 
 class driver:
 	def __init__(self, name):
-		self.name = name
+		self._name = name
 		self._username = None
 		self._password = None
 		self._user_data_dir = None
+		self._active_bet_request: bet_request = None
+
+	def get_name(self):
+		return self._name
+
+	def set_active_bet_request(self, active_bet_request):
+		self._active_bet_request = active_bet_request
 
 	def set_user_data_dir(self, user_data_dir):
 		self._user_data_dir = user_data_dir
 
 	def initialize_webdriver(self) -> None:
-		self._log(f'Initializing {self.name} web driver.')
+		self._log(f'Initializing {self.get_name()} web driver.')
 		self._log(f'Using \'{self._user_data_dir}\' as user_data_dir.')
 		service = Service(executable_path=util.chromedriver_path, service_args=['--log-level=DEBUG'])
 		options = Options()
@@ -52,11 +60,17 @@ class driver:
 		self._log(f'Executed scripts.')
 
 	def set_password(self, password) -> None:
-		self.password = password
+		self._password = password
 
 	def set_username(self, username) -> None:
-		self.username = username
+		self._username = username
 		self._log(f'Set username = {username}.')
+
+	def get_username(self) -> str:
+		return self._username
+
+	def _get_password(self) -> str:
+		return self._password
 
 	def driver_quit(self) -> None:
 		self._log(f'Quitting web driver.')
@@ -68,26 +82,26 @@ class driver:
 		assert log_fn, '"log"\'s types should be defined.'
 
 		if not level:
-			log_fn(f'[{self.name}] {message}')
+			log_fn(f'[{self.get_name()}] {message}')
 			return
 
-		log_fn(f'[{self.name}] {message}', level)
+		log_fn(f'[{self.get_name()}] {message}', level)
 
 	def _login_form_entry(self, username_input, password_input, submit_button):
 		util.simulate.short_interaction_time()
-		util.simulate.type_in_field(username_input, self.username)
+		util.simulate.type_in_field(username_input, self.get_username())
 		util.simulate.short_interaction_time()
-		util.simulate.type_in_field(password_input, self.password)
+		util.simulate.type_in_field(password_input, self._get_password())
 		util.simulate.click_short_wait(submit_button)
 
 	def _login_aux(self) -> None:
 		self.driver.get('www.example.com')
 
 	def login(self) -> bool:
-		if not self.username:
+		if not self.get_username():
 			self._log(f'No username configured.', 'error')
 			return False
-		if not self.password:
+		if not self._get_password():
 			self._log(f'No password configured.', 'error')
 			return False
 		for idx in range(util.max_login_retries):
@@ -98,7 +112,7 @@ class driver:
 				return True
 			except Exception as e:
 				self._log(f'Failed to log in. {e}')
-				util.simulate.exact_wait(10)
+				util.simulate.exact_wait(5)
 		return False
 
 	def _get_promotion_link(self):
@@ -131,22 +145,22 @@ class driver:
 			return []
 
 	# Parses an element and returns odds.
-	def _parse_event(self, event):
+	def _parse_event(self, event) -> odds:
 		pass
 
 	# Generic function for collecting odds from a promotion after getting the 
  	# appropriate promotion link.
-	def get_odds(self):
+	def get_odds(self) -> list[odds]:
 		if not self._get_promotion_page():
 			return []
 
 		events = self._get_events()
-		odds = []
+		all_odds = []
 		for event in events:
-			event_odds = self._parse_event(event)
+			event_odds: odds = self._parse_event(event)
 			if event_odds:
-				odds.append(event_odds)
-		return odds
+				all_odds.append(event_odds)
+		return all_odds
 
 	def _get_event_element(self, team):
 		events = self._get_events()
@@ -158,18 +172,24 @@ class driver:
 	def _get_moneyline_bet_button(self, event, team):
 		return None
 
-	def execute_bet(self, team, wager) -> bool:
+	def execute_bet(self) -> bool:
+		if not self._active_bet_request:
+			self._log('No active bet request.', 'error')
+			return False
+
 		if not self._get_promotion_page():
 			return False
 
-		event = self._get_event_element(team)
-		if not event:
+		event_element = self._get_event_element(self._active_bet_request.get_team())
+		if not event_element:
 			return False
 
-		button = self._get_moneyline_bet_button(event, team)
+		button = self._get_moneyline_bet_button(event_element, self._active_bet_request.get_team())
 		if not button:
 			return False
 
 		self.driver.execute_script("arguments[0].click();", button)
+		self._active_bet_request = None
+		# TODO: rm
 		time.sleep(300)
 		return True
