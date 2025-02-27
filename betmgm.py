@@ -48,28 +48,33 @@ class betmgm(driver):
 		events = self.driver.find_elements(By.CLASS_NAME, table_css_selector)
 		return events
 
-	def _parse_event(self, event) -> odds | None:
+	def _strip_event(self, event):
 		try:
-			info = event.find_element(By.CLASS_NAME, 'grid-info-wrapper')
-			participants = [participant_div.text for participant_div in info.find_elements(By.CLASS_NAME, 'participant')]
-		except:
-			self._log('Could not find participants.', 'error')
+			participants_wrapper = event.find_element(By.CLASS_NAME, 'grid-info-wrapper').find_elements(By.CLASS_NAME, 'participant')
+			betting_categories_wrapper = event.find_element(By.CLASS_NAME, 'grid-group-container').find_elements(By.CLASS_NAME, 'grid-option-group')
+		except Exception as e:
+			self._log(f'Event could not be stripped. {e}', 'error')
 			return None
+
+		return participants_wrapper, betting_categories_wrapper
+
+	def _parse_event(self, event) -> odds | None:
+		participants_wrapper, betting_categories_wrapper = self._strip_event(event)
+
+		if not participants_wrapper or not betting_categories_wrapper:
+			self._log('Event dropped, _strip_event returned None for at least one of participants_wrapper, betting_categories_wrapper.', 'warning')
+			return None
+
+		participants = [participant_div.text for participant_div in participants_wrapper]
 
 		if len(participants) != 2:
-			self._log('Event dropped, participants len neq 2.', 'error')
-			return None
-
-		event_odds_div = event.find_element(By.CLASS_NAME, 'grid-group-container')
-		if not event_odds_div:
-			self._log('Event dropped, no grid container.', 'error')
-			return None
-
-		betting_categories_wrappers = event_odds_div.find_elements(By.CLASS_NAME, 'grid-option-group')
-		if len(betting_categories_wrappers) != 3:
-			self._log('Event dropped, # of elements in event grid neq 3.', 'error')
+			self._log('Event dropped, participants len neq 2.', 'warning')
 			return None
 		
-		moneyline = betting_categories_wrappers[2].text.split()
+		if len(betting_categories_wrapper) != 3:
+			self._log('Event dropped, betting_categories_wrapper len neq 3.', 'warning')
+			return None
+
+		moneyline = betting_categories_wrapper[2].text.split()
 
 		return odds.construct_odds(self.name, participants, moneyline)
