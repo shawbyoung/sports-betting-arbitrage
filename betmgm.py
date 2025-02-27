@@ -36,7 +36,7 @@ class betmgm(driver):
 			case 'nba':
 				return 'https://sports.mi.betmgm.com/en/sports/basketball-7/betting/usa-9/nba-6004'
 			case _:
-				assert False, f'{util.promotion} undefined in {self.name}'
+				assert False, f'{util.promotion} undefined in {self.get_name()}'
 
 	def _get_events_aux(self):
 		table_css_selector = 'grid-event-wrapper'
@@ -48,7 +48,7 @@ class betmgm(driver):
 		events = self.driver.find_elements(By.CLASS_NAME, table_css_selector)
 		return events
 
-	def _parse_event(self, event):
+	def _parse_event(self, event) -> odds:
 		try:
 			info = event.find_element(By.CLASS_NAME, 'grid-info-wrapper')
 			participants = [participant_div.text for participant_div in info.find_elements(By.CLASS_NAME, 'participant')]
@@ -70,8 +70,6 @@ class betmgm(driver):
 			self._log('Event dropped, # of elements in event grid neq 3.', 'error')
 			return None
 		
-		spread = betting_categories_wrappers[0].text.split()
-		total = betting_categories_wrappers[1].text.split()
 		moneyline = betting_categories_wrappers[2].text.split()
 
-		return odds(self.name, participants, spread, total, moneyline)
+		return odds.construct_odds(self.name, participants, moneyline)
