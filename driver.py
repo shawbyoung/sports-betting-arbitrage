@@ -84,6 +84,12 @@ class driver:
 		self.driver.get('www.example.com')
 
 	def login(self) -> bool:
+		if not self.username:
+			self._log(f'No username configured.', 'error')
+			return False
+		if not self.password:
+			self._log(f'No password configured.', 'error')
+			return False
 		for idx in range(util.max_login_retries):
 			self._log(f'Log in attempt {idx}.')
 			try:
@@ -145,7 +151,7 @@ class driver:
 	def _get_event_element(self, team):
 		events = self._get_events()
 		for event in events:
-			if event.text.contains(team):
+			if team in event.text:
 				return event
 		return None
 
@@ -164,5 +170,6 @@ class driver:
 		if not button:
 			return False
 
-		button.click()
+		self.driver.execute_script("arguments[0].click();", button)
+		time.sleep(300)
 		return True
