@@ -62,14 +62,21 @@ class betrivers(driver):
             participants_wrapper = (event_elements[1]).find_element(By.XPATH, './div').find_element(By.XPATH, './div').find_elements(By.XPATH, './div')
         except Exception as e:
             self._log(f'Could not find participants. {e}', 'error')
-            return None
+            return None, None
 
         betting_categories_wrapper = (event_elements[3]).find_element(By.XPATH, './div').find_elements(By.XPATH, './div')
         return participants_wrapper, betting_categories_wrapper
 
     def _parse_event(self, event):
+        # TODO: fix how participants are parsed, we were parsing "Trail" for some portland trailblazer game.
         participants_wrapper, betting_categories_wrapper = self._strip_event(event)
-        participants = [participant_div.text.split()[1] for participant_div in participants_wrapper]
+
+        if not participants_wrapper or not betting_categories_wrapper:
+            self._log('Event dropped, _strip_event returned None for at least one of participants_wrapper, betting_categories_wrapper.', 'warning')
+            return None
+
+        participants = [participant_div.text for participant_div in participants_wrapper]
+
         if len(participants) != 2:
             self._log('Event dropped, participants len neq 2.', 'warning')
             return None
@@ -83,6 +90,6 @@ class betrivers(driver):
     def _get_moneyline_bet_button(self, event, team):
         participants_wrapper, betting_categories_wrapper = self._strip_event(event)
         participants = [participant_div.text.split()[1] for participant_div in participants_wrapper]
-        team_idx = 0 if participants[0].contains(team) else 1
-        moneyline_element = betting_categories_wrapper.find_element(By.XPATH, './div').find_elements(By.XPATH, './div')[1]
+        team_idx = 0 if team in participants[0] else 1
+        moneyline_element = betting_categories_wrapper[1]
         return moneyline_element.find_elements(By.XPATH, './button')[team_idx]
