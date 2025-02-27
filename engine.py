@@ -14,11 +14,13 @@ from betmgm import betmgm
 from betrivers import betrivers
 from draftkings import draftkings 
 from hardrock import hardrock
+from fanduel import fanduel
 
 class engine:
-	def __init__(self):
-		self.initalize_drivers()
+	def __init__(self, drivers):
+		self.drivers = drivers
 		self.config()
+		self.initalize_drivers()
 
 	def run(self):
 		self.login()
@@ -26,11 +28,8 @@ class engine:
 		self.epilogue()
 
 	def initalize_drivers(self):
-		self.drivers = {
-			'betmgm' : betmgm(), 
-			'draftkings' : draftkings(), 
-			'betrivers' : betrivers()
-		}
+		for d in self.drivers.values():
+			d.initialize_webdriver()
 
 	def drop_sportsbook(self, sportsbook):
 		if sportsbook not in self.drivers:
@@ -41,14 +40,7 @@ class engine:
 		del self.drivers[sportsbook]
 		logger.log(f'Dropping sportbook {sportsbook}')
 
-	def config(self):
-		try:
-			with open('.config', 'r') as file:
-				config = json.load(file)
-		except:
-			logger.log_error('No config file.')
-			exit(1)
-
+	def config_promotion(self, config):
 		promotion_opt = config.get('promotion', None) 
 		if not promotion_opt:
 			logger.log_error('No promotion in config file.')
@@ -57,6 +49,7 @@ class engine:
 		util.promotion = promotion_opt
 		logger.log(f'{util.promotion} selected as promotion.')
 
+	def config_sportsbooks(self, config):
 		sportsbooks_opt = config.get('sportsbooks', None)
 		if not sportsbooks_opt:
 			logger.log_error('No sportsbook information (username, password) in config file.')
@@ -72,7 +65,7 @@ class engine:
 				exit(1)
 
 			if sportsbook not in self.drivers:
-				logger.log_warning(f'{sportsbook} not in sportsbooks.')
+				logger.log_warning(f'{sportsbook} in .config but not initialized.')
 				continue
 
 			if not username:
@@ -86,12 +79,43 @@ class engine:
 			self.drivers[sportsbook].set_username(username)
 			self.drivers[sportsbook].password = password
 
+		self.set_profiles(config)
+
+	def set_profiles(self, config):
+		profiles_directory = config.get('profiles_directory', None)
+		profiles = config.get('profiles', None)
+
+		if not profiles_directory:
+			logger.log_error('\'profiles_directory\' undefined in .config.')
+			exit(1)
+
+		if not profiles:
+			logger.log_error('\'profiles\' undefined in .config.')
+			exit(1)
+
+		for profile, driver in zip(profiles, self.drivers.values()):
+			driver.set_user_data_dir(profiles_directory + profile)
+
+	def config(self):
+		try:
+			with open('.config', 'r') as file:
+				config = json.load(file)
+		except:
+			logger.log_error('No config file.')
+			exit(1)
+
+		self.config_promotion(config)
+		self.config_sportsbooks(config)
+
 	def _run_on_drivers(self, task, drivers):
 		# TODO: implement me for bet execution
 		pass
 
 	def _run_on_all_drivers(self, task):
 		results = {}
+		if len(self.drivers) == 0:
+			logger.log_error('No drivers initialized.')
+			exit(1)
 		with ThreadPoolExecutor(max_workers=len(self.drivers)) as executor:
 			future_to_driver = {executor.submit(task, d): d for d in self.drivers.values()}
 			for future in as_completed(future_to_driver):
@@ -100,7 +124,7 @@ class engine:
 					results[driver_obj] = future.result()
 				except Exception as e:
 					logger.log_error(f"Error with driver {driver_obj}: {e}")
-					results[driver_obj] = None
+					results[driver_obj] = []
 
 		return results
 
@@ -108,8 +132,8 @@ class engine:
 		def task(d: driver):
 			return d.login()
 		logger.log('Logging into sportsbooks.')
-		login_err = self._run_on_all_drivers(task)
-		dead_sportsbooks = [sportbook.name for sportbook, err in login_err.items() if err == True]
+		login_success = self._run_on_all_drivers(task)
+		dead_sportsbooks = [sportbook.name for sportbook, success in login_success.items() if success == False]
 		for dead_sportsbook in dead_sportsbooks:
 			self.drop_sportsbook(dead_sportsbook)
 
