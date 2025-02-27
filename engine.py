@@ -108,16 +108,13 @@ class engine:
 		self.config_sportsbooks(config)
 
 	def _run_on_drivers(self, task, drivers):
-		# TODO: implement me for bet execution
-		pass
-
-	def _run_on_all_drivers(self, task):
 		results = {}
-		if len(self.drivers) == 0:
-			logger.log_error('No drivers initialized.')
-			exit(1)
-		with ThreadPoolExecutor(max_workers=len(self.drivers)) as executor:
-			future_to_driver = {executor.submit(task, d): d for d in self.drivers.values()}
+		if len(drivers) == 0:
+			logger.log_error('No drivers.')
+			return results
+
+		with ThreadPoolExecutor(max_workers=len(drivers)) as executor:
+			future_to_driver = {executor.submit(task, d): d for d in drivers}
 			for future in as_completed(future_to_driver):
 				driver_obj = future_to_driver[future]
 				try:
@@ -129,6 +126,9 @@ class engine:
 					results[driver_obj] = []
 
 		return results
+
+	def _run_on_all_drivers(self, task):
+		return self._run_on_drivers(self.drivers.values())
 
 	def login(self):
 		def task(d: driver):
