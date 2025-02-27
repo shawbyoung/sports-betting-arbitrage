@@ -36,22 +36,28 @@ def odds(
         't2_name' : t2_name
     }
 
-    if len(spread) == 4:
-        event_odds['t1_spread_odds'] = util.american.to_decimal(spread[t1_spread_idx])
-        event_odds['t2_spread_odds'] = util.american.to_decimal(spread[t2_spread_idx])
-    else:
-        logger.log_warning(f'[{sportsbook}] {t1_name}, {t2_name} event has no valid spread info.')
+    # TODO: consider dropping unnecessary information.
+    # if len(spread) == 4:
+    #     event_odds['t1_spread_odds'] = util.american.to_decimal(spread[t1_spread_idx])
+    #     event_odds['t2_spread_odds'] = util.american.to_decimal(spread[t2_spread_idx])
+    # else:
+    #     logger.log_warning(f'[{sportsbook}] {t1_name}, {t2_name} event has no valid spread info.')
 
-    # consider dropping unnecessary information.
     # add some form of checking for odds format.
-    if len(total) == 6:
-        event_odds['total_score'] = total[total_idx]
-        event_odds['t1_total_odds'] = util.american.to_decimal(total[t1_total_idx])
-        event_odds['t2_total_odds'] = util.american.to_decimal(total[t2_total_idx])
-    else:
-        logger.log_warning(f'[{sportsbook}] {t1_name}, {t2_name} event has no total info.')
+    # if len(total) == 6:
+    #     event_odds['total_score'] = total[total_idx]
+    #     event_odds['t1_total_odds'] = util.american.to_decimal(total[t1_total_idx])
+    #     event_odds['t2_total_odds'] = util.american.to_decimal(total[t2_total_idx])
+    # else:
+    #     logger.log_warning(f'[{sportsbook}] {t1_name}, {t2_name} event has no total info.')
 
     if len(moneyline) == 2:
+        if not moneyline[t1_moneyline_idx][1:].isnumeric():
+            logger.log_warning(f'[{sportsbook}] {t1_name} moneyline info isn\'t numeric, ({moneyline[t1_moneyline_idx]}) dropping.')
+            return None
+        if not moneyline[t2_moneyline_idx][1:].isnumeric():
+            logger.log_warning(f'[{sportsbook}] {t2_name} moneyline info isn\'t numeric, ({moneyline[t2_moneyline_idx]}) dropping.')
+            return None
         event_odds['t1_moneyline_odds'] = util.american.to_decimal(moneyline[t1_moneyline_idx])
         event_odds['t2_moneyline_odds'] = util.american.to_decimal(moneyline[t2_moneyline_idx])
     else:
