@@ -9,9 +9,7 @@ from fanduel import fanduel
 
 def main():
     drivers = {
-        'fanduel' : fanduel(),
         'betmgm' : betmgm(),
-        'draftkings' : draftkings(),
         'betrivers' : betrivers()
     }
     e = engine(drivers)
