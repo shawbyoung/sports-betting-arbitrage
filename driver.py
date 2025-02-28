@@ -210,8 +210,9 @@ class driver:
 		if not button:
 			return False
 
-		self.driver.execute_script("arguments[0].click();", button)
-		self._active_bet_request = None
+		util.simulate.force_click(self.driver, button)
+
 		# TODO: rm
 		time.sleep(300)
+		self._active_bet_request = None
 		return True

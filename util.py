@@ -65,6 +65,9 @@ class simulate:
     def exact_wait(t):
         time.sleep(t)
 
+    def force_click(driver, element):
+        driver.execute_script("arguments[0].click();", element)
+
     def click_short_wait(element):
         time.sleep(simulate.short_interaction_time())
         element.click()
