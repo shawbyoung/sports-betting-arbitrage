@@ -61,7 +61,6 @@ class simulate:
     _long_t = stats.truncnorm((_long_t_l - _long_t_mu) / _long_t_sig, (long_t_u - _long_t_mu) / _long_t_sig, loc=_long_t_mu, scale=_long_t_sig).rvs(_t_arr_len)
     _long_t_idx = 0
 
-    # TODO: explore conditional waits via selenium.
     def exact_wait(t):
         time.sleep(t)
 
@@ -86,23 +85,34 @@ class simulate:
         WebDriverWait(webdriver, wait_time).until(
 			EC.presence_of_element_located((by, value))
 		)
-    def _type(input_element, text):
-        for c in text:
-            time.sleep(simulate.type_char_interaction_time())
-            input_element.send_keys(c)
 
-    def clear_and_type_in_field(input_element, text):
-        if input_element.get_attribute("value") == text:
-            return
+    def _type(input_element, text) -> bool:
+        try:
+            for c in text:
+                time.sleep(simulate.type_char_interaction_time())
+                input_element.send_keys(c)
+            return True
+        except Exception as e:
+            return False
 
-        input_element.clear()
-        simulate._type(input_element, text)
+    def clear_and_type_in_field(input_element, text) -> bool:
+        try:
+            if input_element.get_attribute("value") == text:
+                return True
 
-    def type_in_field(input_element, text) -> None:
-        if input_element.get_attribute("value") == text:
-            return
+            input_element.clear()
+            return simulate._type(input_element, text)
+        except Exception as e:
+            return False
 
-        simulate._type(input_element, text)
+    def type_in_field(input_element, text) -> bool:
+        try:
+            if input_element.get_attribute("value") == text:
+                return
+
+            return simulate._type(input_element, text)
+        except Exception as e:
+            return False
 
     def type_char_interaction_time() -> float:
         t = simulate._type_t[simulate._type_t_idx]
