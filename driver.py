@@ -106,9 +106,11 @@ class driver:
 	def _login_form_entry(self, username_input, password_input, submit_button) -> bool:
 		util.simulate.short_interaction_time()
 		if not util.simulate.type_in_field(username_input, self.get_username()):
+			self._log('Failed to type in username.', 'error')
 			return False
 		util.simulate.short_interaction_time()
 		if not util.simulate.type_in_field(password_input, self._get_password()):
+			self._log('Failed to type in password.', 'error')
 			return False
 		util.simulate.click_short_wait(submit_button)
 		return True
