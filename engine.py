@@ -246,26 +246,45 @@ class engine:
 				f'and {e.get_t2_max():.2f} ({e.get_t2_max_sportsbook()}).'
 			)
 
-
 		return None
 
 	def _get_odds(d: driver):
 		return d.get_odds()
 
+	def _prepare_bet(d: driver):
+		return d.prepare_bet()
+
 	def _execute_bet(d: driver):
 		return d.execute_bet()
 
-	def execute_bets(self, bet_requests: list[bet_request]):
+	def execute_bets(self, bet_requests: list[bet_request]) -> bool:
 		# Assign bet requests to drivers.
 		drivers = []
 		for bet_request in bet_requests:
 			if bet_request.get_sportsbook() not in self.drivers:
 				logger.log_error(f'Invalid bet request. {bet_request.get_sportsbook()} not in drivers.')
-				continue
+				return False
+		for bet_request in bet_requests:
 			driver = self.drivers[bet_request.get_sportsbook()]
 			driver.set_active_bet_request(bet_request)
 			drivers.append(driver)
-		self._run_on_drivers(engine._execute_bet, drivers)
+
+		# Prepare bets and verify their success.
+		bet_preparation_results = self._run_on_drivers(engine._prepare_bet, drivers)
+		for driver, bet_prepared in bet_preparation_results.items():
+			if bet_prepared == False:
+				# TODO: impl bet_request _repr_ for pretty printing for logging.
+				logger.log_error(f'Could not prepare bet on {driver.get_name()}.')
+				return False
+
+		# Final execution and verification.
+		bet_execution_results = self._run_on_drivers(engine._execute_bet(), drivers)
+		for driver, bet_executed in bet_execution_results.items():
+			if bet_executed == False:
+				logger.log_error(f'Could not execute bet on {driver.get_name()}.')
+				return False
+
+		return True
 
 	def bet(self):
 		idx = 0

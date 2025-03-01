@@ -14,6 +14,7 @@ from typing import Callable
 from logger import logger
 from odds import odds
 from bet_request import bet_request
+from bet_slip import bet_slip
 
 class driver:
 	def __init__(self, name):
@@ -22,9 +23,19 @@ class driver:
 		self._password = None
 		self._user_data_dir = None
 		self._active_bet_request: bet_request = None
+		self._active_bet_slip: bet_slip = None
 
 	def get_name(self):
 		return self._name
+
+	def _set_active_bet_slip(self, bet_slip: bet_slip):
+		self._active_bet_slip = bet_slip
+
+	def get_active_bet_slip(self) -> bet_slip:
+		return self._active_bet_slip
+
+	def get_active_bet_request(self) -> bet_request | None:
+		return self._active_bet_request
 
 	def set_active_bet_request(self, active_bet_request):
 		self._active_bet_request = active_bet_request
@@ -41,6 +52,7 @@ class driver:
 		options.add_argument(f"user-agent={user_agent}")
 		options.binary_location = 'chrome/chrome-win64/chrome.exe'
 		options.add_argument(f'--user-data-dir={self._user_data_dir}')
+		options.add_argument('--start-maximized')
 		options.add_argument('--disable-blink-features')
 		options.add_argument('--disable-blink-features=AutomationControlled')
 		options.add_experimental_option("excludeSwitches", ["enable-automation"])
@@ -87,12 +99,19 @@ class driver:
 
 		log_fn(f'[{self.get_name()}] {message}', level)
 
-	def _login_form_entry(self, username_input, password_input, submit_button):
+	# TODO: make calls to `_login_form_entry` safer via failing if false. This could require
+	# the reworking of login and deciding on a more philisophical question - do we try-catch
+	# in utilty functions or outside of them? I lean towards within, avoid code duplicity.
+	# Argument to be made that failing with a call stack is helpful? Worth exploring later.
+	def _login_form_entry(self, username_input, password_input, submit_button) -> bool:
 		util.simulate.short_interaction_time()
-		util.simulate.type_in_field(username_input, self.get_username())
+		if not util.simulate.type_in_field(username_input, self.get_username()):
+			return False
 		util.simulate.short_interaction_time()
-		util.simulate.type_in_field(password_input, self._get_password())
+		if not util.simulate.type_in_field(password_input, self._get_password()):
+			return False
 		util.simulate.click_short_wait(submit_button)
+		return True
 
 	def _login_aux(self) -> None:
 		self.driver.get('www.example.com')
@@ -120,11 +139,11 @@ class driver:
 
 	# Gets the appropriate promotion page for `collect_promotion_odds`. 
 	# Logs an error if the page is unreachable.
+	# TODO: consider re-requesting the same link, betmgm seemed to maintain different
+	# odds from what appeared on the bet slip. a refreshed fixed this.
 	def _get_promotion_page(self) -> bool:
 		try:
-			link = self._get_promotion_link()
-			cur_url = self.driver.current_url
-			if link != cur_url:
+			if self._get_promotion_link() !=  self.driver.current_url:
 				self.driver.get(self._get_promotion_link())
 			return True
 		except Exception as e:
@@ -191,28 +210,127 @@ class driver:
 				return event
 		return None
 
-	def _get_moneyline_bet_button(self, event, team):
-		pass
+	def _get_web_element(self, *args, aux_fn, error_message):
+		res = None
+		exception = None
+		try:
+			res = aux_fn(*args)
+		except Exception as e:
+			exception = e
+		if not res:
+			self._log(error_message + f' Exception: {exception}' if exception else error_message)
+		return res
 
-	def execute_bet(self) -> bool:
-		if not self._active_bet_request:
+	def _get_moneyline_bet_button(self, event, team):
+		return self._get_web_element(
+			event, team,
+			aux_fn=self._get_moneyline_bet_button_aux,
+			error_message='Couldn\'t get moneyline bet button.')
+
+	def _get_moneyline_bet_button_aux(self, event, team):
+		return None
+
+	def _get_bet_slip_element(self):
+		return self._get_web_element(
+			aux_fn=self._get_bet_slip_element_aux,
+			error_message='Couldn\'t get bet slip element.'
+		)
+
+	def _get_bet_slip_element_aux(self):
+		return None
+
+	def _get_wager_input_element(self, bet_slip_element):
+		return self._get_web_element(
+			bet_slip_element,
+			aux_fn=self._get_wager_input_element_aux,
+			error_message='Couldn\'t get wager input element.'
+		)
+
+	def _get_wager_input_element_aux(self, bet_slip_element):
+		return None
+
+	def _get_submit_bet_button(self, bet_slip_element):
+		return self._get_web_element(
+			bet_slip_element,
+			aux_fn=self._get_submit_bet_button_aux,
+			error_message='Couldn\'t get submit bet button.'
+		)
+
+	def _get_submit_bet_button_aux(self, bet_slip_element):
+		return None
+
+	def _get_bet_slip_odds_element(self, bet_slip_element):
+		return self._get_web_element(
+			bet_slip_element,
+			aux_fn=self._get_bet_slip_odds_element_aux,
+			error_message='Couldn\'t get bet slip odds element.'
+		)
+
+	def _get_bet_slip_odds_element_aux(self, bet_slip_element):
+		return None
+
+	def prepare_bet(self) -> bool:
+		bet_request = self.get_active_bet_request()
+		if not bet_request:
 			self._log('No active bet request.', 'error')
 			return False
-
 		if not self._get_promotion_page():
 			return False
 
-		event_element = self._get_event_element(self._active_bet_request.get_team())
+		# Finds and clicks the appropriate moneyline bet button.
+		event_element = self._get_event_element(bet_request.get_team())
 		if not event_element:
+			self._log(f'Couldn\'t find event element corresponding to {bet_request.get_team()}.', 'error')
 			return False
-
-		button = self._get_moneyline_bet_button(event_element, self._active_bet_request.get_team())
+		button = self._get_moneyline_bet_button(event_element, bet_request.get_team())
 		if not button:
+			self._log(f'Couldn\'t get moneyline bet button. Could be inactive', 'error')
+			return False
+		button.click()
+
+		# TODO: more meaningful disambiguation with multiple bets on slip for
+		# `_get_wager_input` and `_get_bet_slip_odds_element`.
+		# Prepares bet slip information for final verification and execution.
+		# Instruction ordering is particular - at least on betrivers, there is a tendency for the bet_slip
+		# element to disappear. This should call for safer utility functions (surrounded by try catch blocks
+		# with a return value representing success.). For now, simply interacting with the bet slip element
+		# quickly appears to help prevent it from disappearing.
+		# It's possible previous runs of prepare bet change the state - more reason to implement the epilogue.
+
+		bet_slip_element = self._get_bet_slip_element()
+		if not bet_slip_element:
+			return False
+		wager_input_element = self._get_wager_input_element(bet_slip_element)
+		if not wager_input_element:
+			return False
+		if not util.simulate.clear_and_type_in_field(wager_input_element, str(bet_request.get_wager())):
+			self._log(f'Failed to enter wager amount in input.')
 			return False
 
-		util.simulate.force_click(self.driver, button)
+		active_bet_bet_slip_odds_element = self._get_bet_slip_odds_element(bet_slip_element)
+		if not active_bet_bet_slip_odds_element:
+			return False
+		submit_bet_button = self._get_submit_bet_button(bet_slip_element)
+		if not submit_bet_button:
+			return False
 
-		# TODO: rm
-		time.sleep(300)
-		self._active_bet_request = None
+		self._set_active_bet_slip(
+			bet_slip(
+				bet_slip_element,
+				active_bet_bet_slip_odds_element,
+				wager_input_element,
+				submit_bet_button))
 		return True
+
+	def execute_bet(self) -> bool:
+		br: bet_request = self.get_active_bet_request()
+		bs: bet_slip = self.get_active_bet_slip()
+		try:
+			bs_odds = bs.get_odds_element().text
+			if util.american.to_decimal(bs_odds) != br.get_odds():
+				raise Exception(f'Bet slip odds ({util.american.to_decimal(bs_odds)}={bs_odds}) neq bet request odds ({br.get_odds()})')
+			bs.get_submit_button().click()
+			return True
+		except Exception as e:
+			logger.log_error(e)
+			return False
