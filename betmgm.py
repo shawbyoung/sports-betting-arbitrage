@@ -62,3 +62,33 @@ class betmgm(driver):
 		participants = [participant_div.text for participant_div in participants_wrapper]
 		moneyline = betting_categories_wrapper[2].text.split()
 		return odds.construct_odds(self.get_name(), participants, moneyline)
+
+	def _get_moneyline_bet_button_aux(self, event, team):
+		participants_wrapper, betting_categories_wrapper = self._strip_event(event)
+		participants = [participant_div.text for participant_div in participants_wrapper]
+		team_idx = 0 if team in participants[0] else 1
+		moneyline_element = betting_categories_wrapper[2]
+		return moneyline_element.find_elements(By.CSS_SELECTOR, 'ms-event-pick')[team_idx]
+
+	def _get_bet_slip_element_aux(self):
+		bet_slip_by, bet_slip_value = By.CLASS_NAME, "bet-column"
+		util.simulate.wait_for_element(self.driver, 1, bet_slip_by, bet_slip_value)
+		return self.driver.find_element(bet_slip_by, bet_slip_value)
+
+	def _get_wager_input_element_aux(self, bet_slip_element):
+		wager_element_by, wager_element_value = By.CLASS_NAME, "stake-input-value"
+		util.simulate.wait_for_element(self.driver, 1, wager_element_by, wager_element_value)
+		return self.driver.find_element(wager_element_by, wager_element_value)
+
+	def _get_submit_bet_button_aux(self, bet_slip_element):
+		submit_button_by, submit_button_value = By.CLASS_NAME, "betslip-place-button"
+		util.simulate.wait_for_element(self.driver, 1, submit_button_by, submit_button_value)
+		return self.driver.find_element(submit_button_by, submit_button_value)
+
+	def _get_bet_slip_odds_element_aux(self, bet_slip_element):
+		odds_by, odds_value = By.CLASS_NAME, "betslip-pick-odds__value"
+		util.simulate.wait_for_element(self.driver, 1,  odds_by, odds_value )
+		odds = self.driver.find_elements(odds_by, odds_value)
+		if len(odds) != 1:
+			raise Exception('Number of bet slip odds elements neq 1')
+		return odds[0]
