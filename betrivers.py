@@ -26,14 +26,17 @@ class betrivers(driver):
 
         '''
         Checks the state of username_input and password_input and greedily clicks the login button if 
-        validation-ok exists in both elements, assuming cookies have loaded in the username and password. 
+        validation-ok exists in both elements, assuming cookies have loaded in the username and password.
+        Waits for valdiation attributes to load.
         '''
+        util.simulate.exact_wait(2.5)
         valid_user_entered = "validation-ok" in username_input.get_attribute("class").split()
         valid_password_entered = "validation-ok" in password_input.get_attribute("class").split()
         if valid_user_entered and valid_password_entered:
             self._log('Assuming cookies have loaded in username and password - submitting login form.')
             util.simulate.click_short_wait(submit_button)
         else:
+            self._log('Entering information into login form.')
             self._login_form_entry(username_input, password_input, submit_button)
         util.simulate.exact_wait(5)
 
@@ -68,7 +71,13 @@ class betrivers(driver):
         return participants_wrapper, betting_categories_wrapper
 
     def _construct_odds(self, participants_wrapper, betting_categories_wrapper) -> odds | None:
-        participants = [' '.join(participant_div.text.split()[1:]) for participant_div in participants_wrapper]
+        participants = []
+        for participant_div in participants_wrapper:
+            participant_str_li = participant_div.text.split()[1:]
+            if participant_str_li[-1].isnumeric():
+                participant_str_li.pop()
+            participants.append(' '.join(participant_str_li))
+
         moneyline = betting_categories_wrapper[1].text.split()
         return odds.construct_odds(self._name, participants, moneyline)
 
