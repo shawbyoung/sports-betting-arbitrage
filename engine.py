@@ -5,6 +5,8 @@ import util
 
 from itertools import chain
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import Type
+from tabulate import tabulate
 
 from driver import driver
 from logger import logger
@@ -15,7 +17,7 @@ from bet_request import bet_request
 # Drivers
 from betmgm import betmgm
 from betrivers import betrivers
-from draftkings import draftkings 
+from draftkings import draftkings
 from hardrock import hardrock
 from fanduel import fanduel
 
@@ -23,7 +25,8 @@ class engine:
 	events_map_ty = dict[tuple[str,str], event]
 
 	def __init__(self, drivers):
-		self.drivers = drivers
+		self.drivers: dict[str, Type[driver]] = drivers
+		self._login_flag: bool = False
 		self.config()
 		self.initalize_drivers()
 
@@ -101,6 +104,14 @@ class engine:
 		for profile, driver in zip(profiles, self.drivers.values()):
 			driver.set_user_data_dir(profiles_directory + profile)
 
+	def config_login(self, config):
+		login_opt = config.get('login', None)
+		if login_opt == None:
+			logger.log_warning('No login specification (login=false/true).')
+			exit(1)
+		login_flag: bool = login_opt
+		self._login_flag = login_flag
+
 	def config(self):
 		try:
 			with open('.config', 'r') as file:
@@ -109,6 +120,7 @@ class engine:
 			logger.log_error('No config file.')
 			exit(1)
 
+		self.config_login(config)
 		self.config_promotion(config)
 		self.config_sportsbooks(config)
 
@@ -139,6 +151,10 @@ class engine:
 		return d.login()
 
 	def login(self):
+		if self._login_flag == False:
+			logger.log('Login flag set to false. Not initiating logins.')
+			return
+
 		logger.log('Logging into sportsbooks.')
 		login_success = self._run_on_all_drivers(engine._login)
 		dead_sportsbooks = [sportbook.get_name() for sportbook, success in login_success.items() if success == False]
@@ -186,19 +202,20 @@ class engine:
 			assert len(bet_request) == 2, 'len(bet requests) neq 2.'
 			f, u = bet_request
 			logger.log(
-				f'Arbitrage found! Bet {f.get_wager()} on {f.get_team()} through {f.get_sportsbook()} and '
-				f'{u.get_wager()} on {u.get_team()} through {u.get_sportsbook()}.'
+				'team\todds\twager\twinnings\tprofit\t'
+			)
+			f_winnings, f_profit = f.get_wager() * f.get_odds(), f.get_wager() * f.get_odds() - u.get_wager() - f.get_wager()
+			u_winnings, u_profit = u.get_wager() * u.get_odds(), u.get_wager() * u.get_odds() - u.get_wager() - f.get_wager()
+			u_winnings = u.get_wager() * u.get_odds() - u.get_wager()
+			logger.log(
+				f'{f.get_team()}\t{f.get_odds():.2f}\t{f.get_wager()}\t{f_winnings}\t{f_profit}'
 			)
 			logger.log(
-				f'Favorite wager = {bet_amt} / (({f.get_odds():.2f}/{u.get_odds():.2f}) + 1 ) ~= {f.get_wager()}.'
-			)
-			logger.log(
-				f'Underdog wager = ({bet_amt}*{f.get_odds():.2f}) / ({f.get_odds():.2f} + {u.get_odds():.2f}) ~= {u.get_wager()}.'
-			)
-			logger.log(
-				f'Profit = {util.compute_winnings(f.get_wager(), f.get_odds(), u.get_wager(), u.get_odds())}'
+				f'{u.get_team()}\t{u.get_odds():.2f}\t{u.get_wager()}\t{u_winnings}\t{u_profit}'
 			)
 
+		logger.log(f'Tracking {len(events)} events.')
+		data = [['t1', 't2', 't1_min', 't2_max', 't1_min_sb', 't2_max_sb', 't2_min', 't1_max', 't2_min_sb', 't1_max_sb']]
 		for (t1_name, t2_name), e in events.items():
 			if util.compute_profit(e.get_t1_min(), e.get_t2_max()) > 1:
 				bet_requests = [
@@ -218,6 +235,7 @@ class engine:
 					)
 				]
 				log_arb_found(bet_requests)
+				return bet_requests
 			if util.compute_profit(e.get_t1_max(), e.get_t2_min()) > 1:
 				bet_requests = [
 					# Favorite.
@@ -236,16 +254,16 @@ class engine:
 					)
 				]
 				log_arb_found(bet_requests)
+				return bet_requests
 
-			logger.log(
-				f'Arbitrage not found. Best odds on {t1_name} are {e.get_t1_min():.2f} ({e.get_t1_min_sportsbook()}) '
-				f'and {e.get_t1_max():.2f} ({e.get_t1_max_sportsbook()}).'
-			)
-			logger.log(
-				f'Best odds on {t2_name} are {e.get_t2_min():.2f} ({e.get_t2_min_sportsbook()}) '
-				f'and {e.get_t2_max():.2f} ({e.get_t2_max_sportsbook()}).'
-			)
+			data.append([
+				t1_name, t2_name,
+				f'{e.get_t1_min():.2f}', f'{e.get_t2_max():.2f}', e.get_t1_min_sportsbook(), e.get_t2_max_sportsbook(),
+				f'{e.get_t2_min():.2f}', f'{e.get_t1_max():.2f}', e.get_t2_min_sportsbook(), e.get_t1_max_sportsbook()
+			])
 
+		data_str = tabulate(data, headers="firstrow", tablefmt="plain")
+		logger.log('\n' + data_str)
 		return None
 
 	def _get_odds(d: driver):
