@@ -6,6 +6,7 @@ import fnmatch
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
+# TODO: implement state here, in config, and in individual drivers, eventually.
 promotion = None
 # TODO: make these constant, ie return from func instead of mutable var, like promotion.
 chromedriver_path = 'chromedriver/chromedriver.exe'
@@ -99,7 +100,6 @@ class simulate:
         try:
             if input_element.get_attribute("value") == text:
                 return True
-
             input_element.clear()
             return simulate._type(input_element, text)
         except Exception as e:
@@ -109,7 +109,6 @@ class simulate:
         try:
             if input_element.get_attribute("value") == text:
                 return
-
             return simulate._type(input_element, text)
         except Exception as e:
             return False
