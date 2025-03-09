@@ -8,8 +8,9 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.remote.webelement import WebElement
 
-from typing import Callable
+from typing import Callable, TypeVar
 
 from logger import logger
 from odds import odds
@@ -37,7 +38,7 @@ class driver:
 	def get_active_bet_request(self) -> bet_request | None:
 		return self._active_bet_request
 
-	def set_active_bet_request(self, active_bet_request):
+	def set_active_bet_request(self, active_bet_request: bet_request):
 		self._active_bet_request = active_bet_request
 
 	def set_user_data_dir(self, user_data_dir):
@@ -152,13 +153,13 @@ class driver:
 			self._log(f'Cannot get {util.promotion} page. {e}', 'error')
 			return False
 
-	def _get_events_aux(self):
+	def _get_events_aux(self) -> list[WebElement]:
 		pass
 
 	# Returns elements that represent sports events.
-	def _get_events(self):
+	def _get_events(self) -> list[WebElement]:
 		try:
-			events = self._get_events_aux()
+			events: list[WebElement] = self._get_events_aux()
 			self._log(f'Found {len(events)} events.')
 			return events
 		except Exception as e:
@@ -166,9 +167,10 @@ class driver:
 			return []
 
 	# Strips an event down to a participants_wrapper and a betting_categories_wrapper.
-	def _strip_event(self, event):
+	def _strip_event(self, event: WebElement) -> tuple:
 		pass
 
+	# TODO: decide on typing for participants wrapper and betting_categories_wrapper. probably just list[WebElement].
 	# Constructs an odds object (or returns None) from a participants_wrapper and a betting_categories_wrapper.
 	def _construct_odds(self, participants_wrapper, betting_categories_wrapper) -> odds | None:
 		pass
@@ -205,16 +207,39 @@ class driver:
 				all_odds.append(event_odds)
 		return all_odds
 
-	def _get_event_element(self, team):
-		events = self._get_events()
+	def _get_event_element(self, team: str) -> WebElement | None:
+		events: list[WebElement] = self._get_events()
 		for event in events:
 			if team in event.text:
 				return event
 		return None
 
-	def _get_web_element(self, *args, aux_fn, error_message):
-		res = None
-		exception = None
+	def _safe_driver_get(self, by: str, value: str) -> WebElement | None:
+		try:
+			return self.driver.find_element(by, value)
+		except Exception as e:
+			self._log(f'Could not find element {{by: {by}, value: {value}}}. Exception: {e}', 'error')
+			return None
+
+	def _safe_driver_get_all(self, by: str, value: str) -> list[WebElement]:
+		try:
+			return self.driver.find_elements(by, value)
+		except Exception as e:
+			self._log(f'Could not find elements {{by: {by}, value: {value}}}. Exception: {e}', 'error')
+			return []
+
+	def _safe_driver_wait(self, by: str, value: str, timeout: int) -> WebElement | None:
+		try:
+			return WebDriverWait(self.driver, timeout).until(
+				EC.presence_of_element_located((by, value))
+			)
+		except Exception as e:
+			self._log(f'Could not find element {{by: {by}, value: {value}}}. Exception: {e}', 'error')
+			return None
+
+	def _get_web_element(self, *args: ..., aux_fn: Callable[..., WebElement], error_message: str) -> WebElement | None:
+		res: WebElement | None = None
+		exception: Exception | None = None
 		try:
 			res = aux_fn(*args)
 		except Exception as e:
@@ -223,72 +248,73 @@ class driver:
 			self._log(error_message + f' Exception: {exception}' if exception else error_message)
 		return res
 
-	def _get_moneyline_bet_button(self, event, team):
+	def _get_moneyline_bet_button(self, event: WebElement, team: str) -> WebElement | None:
 		return self._get_web_element(
 			event, team,
 			aux_fn=self._get_moneyline_bet_button_aux,
 			error_message='Couldn\'t get moneyline bet button.')
 
-	def _get_moneyline_bet_button_aux(self, event, team):
+	def _get_moneyline_bet_button_aux(self, event: WebElement, team: str) -> WebElement | None:
 		return None
 
-	def _get_bet_slip_element(self):
+	def _get_bet_slip_element(self) -> WebElement | None:
 		return self._get_web_element(
 			aux_fn=self._get_bet_slip_element_aux,
 			error_message='Couldn\'t get bet slip element.'
 		)
 
-	def _get_bet_slip_element_aux(self):
+	def _get_bet_slip_element_aux(self) -> WebElement | None:
 		return None
 
-	def _get_wager_input_element(self, bet_slip_element):
+	def _get_wager_input_element(self, bet_slip_element: WebElement) -> WebElement | None:
 		return self._get_web_element(
 			bet_slip_element,
 			aux_fn=self._get_wager_input_element_aux,
 			error_message='Couldn\'t get wager input element.'
 		)
 
-	def _get_wager_input_element_aux(self, bet_slip_element):
+	def _get_wager_input_element_aux(self, bet_slip_element: WebElement) -> WebElement | None:
 		return None
 
-	def _get_submit_bet_button(self, bet_slip_element):
+	def _get_submit_bet_button(self, bet_slip_element: WebElement) -> WebElement | None:
 		return self._get_web_element(
 			bet_slip_element,
 			aux_fn=self._get_submit_bet_button_aux,
 			error_message='Couldn\'t get submit bet button.'
 		)
 
-	def _get_submit_bet_button_aux(self, bet_slip_element):
+	def _get_submit_bet_button_aux(self, bet_slip_element: WebElement) -> WebElement | None:
 		return None
 
-	def _get_bet_slip_odds_element(self, bet_slip_element):
+	def _get_bet_slip_odds_element(self, bet_slip_element: WebElement) -> WebElement | None:
 		return self._get_web_element(
 			bet_slip_element,
 			aux_fn=self._get_bet_slip_odds_element_aux,
 			error_message='Couldn\'t get bet slip odds element.'
 		)
 
-	def _get_bet_slip_odds_element_aux(self, bet_slip_element):
+	def _get_bet_slip_odds_element_aux(self, bet_slip_element: WebElement) -> WebElement | None:
 		return None
 
 	def prepare_bet(self) -> bool:
-		bet_request = self.get_active_bet_request()
-		if not bet_request:
+		br: bet_request | None = self.get_active_bet_request()
+		if not br:
 			self._log('No active bet request.', 'error')
 			return False
 		if not self._get_promotion_page():
 			return False
 
 		# Finds and clicks the appropriate moneyline bet button.
-		event_element = self._get_event_element(bet_request.get_team())
+		event_element: WebElement = self._get_event_element(br.get_team())
 		if not event_element:
-			self._log(f'Couldn\'t find event element corresponding to {bet_request.get_team()}.', 'error')
+			self._log(f'Couldn\'t find event element corresponding to {br.get_team()}.', 'error')
 			return False
-		button = self._get_moneyline_bet_button(event_element, bet_request.get_team())
+		button: WebElement = self._get_moneyline_bet_button(event_element, br.get_team())
 		if not button:
 			self._log(f'Couldn\'t get moneyline bet button. Could be inactive', 'error')
 			return False
-		button.click()
+		if not util.simulate.safe_click(button):
+			return False
 
 		# TODO: more meaningful disambiguation with multiple bets on slip for
 		# `_get_wager_input` and `_get_bet_slip_odds_element`.
@@ -299,20 +325,23 @@ class driver:
 		# quickly appears to help prevent it from disappearing.
 		# It's possible previous runs of prepare bet change the state - more reason to implement the epilogue.
 
-		bet_slip_element = self._get_bet_slip_element()
+		bet_slip_element: WebElement = self._get_bet_slip_element()
 		if not bet_slip_element:
 			return False
-		wager_input_element = self._get_wager_input_element(bet_slip_element)
+
+		wager_input_element: WebElement = self._get_wager_input_element(bet_slip_element)
 		if not wager_input_element:
 			return False
-		if not util.simulate.clear_and_type_in_field(wager_input_element, str(bet_request.get_wager())):
+
+		if not util.simulate.clear_and_type_in_field(wager_input_element, str(br.get_wager())):
 			self._log(f'Failed to enter wager amount in input.')
 			return False
 
-		active_bet_bet_slip_odds_element = self._get_bet_slip_odds_element(bet_slip_element)
+		active_bet_bet_slip_odds_element: WebElement = self._get_bet_slip_odds_element(bet_slip_element)
 		if not active_bet_bet_slip_odds_element:
 			return False
-		submit_bet_button = self._get_submit_bet_button(bet_slip_element)
+
+		submit_bet_button: WebElement = self._get_submit_bet_button(bet_slip_element)
 		if not submit_bet_button:
 			return False
 
@@ -328,11 +357,13 @@ class driver:
 		br: bet_request = self.get_active_bet_request()
 		bs: bet_slip = self.get_active_bet_slip()
 		try:
-			bs_odds = bs.get_odds_element().text
+			bs_odds: str = bs.get_odds_element().text
+			prefix, odds = bs_odds[0], bs_odds[1:]
+			if prefix not in ['+', '-'] or not odds.isnumeric():
+				raise Exception(f'Odds string formatted incorrectly. {bs_odds}')
 			if util.american.to_decimal(bs_odds) != br.get_odds():
 				raise Exception(f'Bet slip odds ({util.american.to_decimal(bs_odds)}={bs_odds}) neq bet request odds ({br.get_odds()})')
-			bs.get_submit_button().click()
-			return True
+			return util.simulate.safe_click(bs.get_submit_button())
 		except Exception as e:
-			logger.log_error(e)
+			logger.log_error(str(e))
 			return False
