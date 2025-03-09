@@ -5,7 +5,7 @@ import util
 
 from itertools import chain
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import Type
+from typing import Type, TypeVar, Callable
 from tabulate import tabulate
 
 from driver import driver
@@ -20,6 +20,10 @@ from betrivers import betrivers
 from draftkings import draftkings
 from hardrock import hardrock
 from fanduel import fanduel
+
+task_res_ty = TypeVar('task_res_generic_ty')
+task_ty = Callable[[Type[driver]], task_res_ty]
+drivers_list_ty = list[Type[driver]]
 
 class engine:
 	events_map_ty = dict[tuple[str,str], event]
@@ -124,8 +128,8 @@ class engine:
 		self.config_promotion(config)
 		self.config_sportsbooks(config)
 
-	def _run_on_drivers(self, task, drivers):
-		results = {}
+	def _run_on_drivers(self, task: task_ty, drivers: drivers_list_ty):
+		results: dict[Type[driver], task_res_ty | None] = {}
 		if len(drivers) == 0:
 			logger.log_error('No drivers.')
 			return results
@@ -133,20 +137,19 @@ class engine:
 		with ThreadPoolExecutor(max_workers=len(drivers)) as executor:
 			future_to_driver = {executor.submit(task, d): d for d in drivers}
 			for future in as_completed(future_to_driver):
-				driver_obj = future_to_driver[future]
+				driver_obj: driver = future_to_driver[future]
 				try:
 					results[driver_obj] = future.result()
 				except Exception as e:
 					logger.log_error(f"Error with driver {driver_obj}: {e}")
-					# TODO: Change `results[driver_obj]` back to None and add smth to handle that in
-					# bet so that _run_on_all_drivers returns output that's handle-able by a multitude of tasks.
 					results[driver_obj] = None
 
 		return results
 
-	def _run_on_all_drivers(self, task):
+	def _run_on_all_drivers(self, task: task_ty):
 		return self._run_on_drivers(task, self.drivers.values())
 
+	# TODO: remove all tasks private methods and replace with lambdas.
 	def _login(d: driver):
 		return d.login()
 
@@ -269,37 +272,34 @@ class engine:
 	def _get_odds(d: driver):
 		return d.get_odds()
 
-	def _prepare_bet(d: driver):
-		return d.prepare_bet()
-
-	def _execute_bet(d: driver):
-		return d.execute_bet()
-
+	# TODO: Implement bet hedging in case of bet failure.
 	def execute_bets(self, bet_requests: list[bet_request]) -> bool:
 		# Assign bet requests to drivers.
-		drivers = []
+		drivers: drivers_list_ty = []
+		prepare_bet: Callable[[Type[driver]], bool] = lambda d: d.prepare_bet()
+		execute_bet: Callable[[Type[driver]], bool] = lambda d: d.execute_bet()
+
 		for bet_request in bet_requests:
-			if bet_request.get_sportsbook() not in self.drivers:
+			d: driver = self.drivers[bet_request.get_sportsbook()]
+			if d not in self.drivers:
 				logger.log_error(f'Invalid bet request. {bet_request.get_sportsbook()} not in drivers.')
 				return False
-		for bet_request in bet_requests:
-			driver = self.drivers[bet_request.get_sportsbook()]
-			driver.set_active_bet_request(bet_request)
-			drivers.append(driver)
+			d.set_active_bet_request(bet_request)
+			drivers.append(d)
 
 		# Prepare bets and verify their success.
-		bet_preparation_results = self._run_on_drivers(engine._prepare_bet, drivers)
-		for driver, bet_prepared in bet_preparation_results.items():
+		bet_preparation_results: dict[Type[driver], bool] = self._run_on_drivers(prepare_bet, drivers)
+		for d, bet_prepared in bet_preparation_results.items():
 			if bet_prepared == False:
 				# TODO: impl bet_request _repr_ for pretty printing for logging.
-				logger.log_error(f'Could not prepare bet on {driver.get_name()}.')
+				logger.log_error(f'Could not prepare bet on {d.get_name()}.')
 				return False
 
 		# Final execution and verification.
-		bet_execution_results = self._run_on_drivers(engine._execute_bet(), drivers)
-		for driver, bet_executed in bet_execution_results.items():
+		bet_execution_results: dict[Type[driver], bool] = self._run_on_drivers(execute_bet, drivers)
+		for d, bet_executed in bet_execution_results.items():
 			if bet_executed == False:
-				logger.log_error(f'Could not execute bet on {driver.get_name()}.')
+				logger.log_error(f'Could not execute bet on {d.get_name()}.')
 				return False
 
 		return True
