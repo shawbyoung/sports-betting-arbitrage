@@ -1,7 +1,7 @@
 from driver import *
 
 class betmgm(driver):
-	def __init__(self):		
+	def __init__(self):
 		super().__init__('betmgm')
  
 	def _login_aux(self):
@@ -63,6 +63,8 @@ class betmgm(driver):
 	def _construct_odds(self, participants_wrapper, betting_categories_wrapper) -> odds | None:
 		participants: list[str] = self._participants_parser(participants_wrapper)
 		moneyline: list[str] = betting_categories_wrapper[2].text.split()
+		# TODO: sometimes - when odds changes - moneyline isn't necessarily len 2, but len 3 or 4
+		# where extra divs are the new odds that are about to be displayed. Fix to handle this case.
 		return odds.construct_odds(self.get_name(), participants, moneyline)
 
 	def _get_moneyline_bet_button_aux(self, event: WebElement, team: str) -> WebElement | None:
