@@ -47,20 +47,17 @@ class betrivers(driver):
             case _:
                 assert False, f'{util.promotion} undefined in {self.get_name()}'
 
-    def _get_events_aux(self):
+    def _get_events_aux(self) -> list[WebElement]:
+        # TODO: lowkey this selector is so ugly surely there's a better way to do this.
         table_css_selector = 'div[data-testid=\'listview-group-1000093652-events-container\''
-        WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, table_css_selector))
-        )
-        time.sleep(1)
+        events_parent_div = self._safe_driver_wait(By.CSS_SELECTOR, table_css_selector, 10)
+        if events_parent_div is None:
+            return []
+        return self._safe_driver_get_all(By.CSS_SELECTOR, 'article')
 
-        events_parent_div = self.driver.find_element(By.CSS_SELECTOR, table_css_selector)
-        events = events_parent_div.find_elements(By.CSS_SELECTOR, 'article')
-
-        return events
-
-    def _strip_event(self, event):
+    def _strip_event(self, event: WebElement) -> tuple:
         try:
+            # TODO: soooo ugly, replace when u can.
             event_elements = event.find_element(By.XPATH, './div').find_elements(By.XPATH, './div')[0].find_elements(By.XPATH, './div')[0].find_elements(By.XPATH, './div')
             participants_wrapper = (event_elements[1]).find_element(By.XPATH, './div').find_element(By.XPATH, './div').find_elements(By.XPATH, './div')
             betting_categories_wrapper = (event_elements[3]).find_element(By.XPATH, './div').find_elements(By.XPATH, './div')
@@ -70,40 +67,56 @@ class betrivers(driver):
 
         return participants_wrapper, betting_categories_wrapper
 
-    def _construct_odds(self, participants_wrapper, betting_categories_wrapper) -> odds | None:
-        participants = []
+    def _participants_parser(self, participants_wrapper) -> list[str]:
+        participants: list[str] = []
         for participant_div in participants_wrapper:
-            participant_str_li = participant_div.text.split()[1:]
+            participant_str_li: list[str] = participant_div.text.split()[1:]
+            # During live games, the participant string may contain the score, remove it.
             if participant_str_li[-1].isnumeric():
                 participant_str_li.pop()
             participants.append(' '.join(participant_str_li))
+        return participants
 
-        moneyline = betting_categories_wrapper[1].text.split()
+    def _construct_odds(self, participants_wrapper, betting_categories_wrapper) -> odds | None:
+        participants: list[str] = self._participants_parser(participants_wrapper)
+        moneyline: list[str] = betting_categories_wrapper[1].text.split()
         return odds.construct_odds(self._name, participants, moneyline)
 
-    def _get_moneyline_bet_button_aux(self, event, team):
+    def _get_moneyline_bet_button_aux(self, event: WebElement, team: str) -> WebElement | None:
         participants_wrapper, betting_categories_wrapper = self._strip_event(event)
-        participants = [participant_div.text.split()[1] for participant_div in participants_wrapper]
-        team_idx = 0 if team in participants[0] else 1
-        moneyline_element = betting_categories_wrapper[1]
-        return moneyline_element.find_elements(By.XPATH, './button')[team_idx]
+        if not participants_wrapper or not betting_categories_wrapper:
+            return None
+        participants: list[str] = self._participants_parser(participants_wrapper)
+        if len(participants) != 2 or (team not in participants[0] and team not in participants[1]):
+            self._log(f'Malformed `participants`. {participants}', 'error')
+            return None
+        team_idx: int = 0 if team in participants[0] else 1
+        if len(betting_categories_wrapper) != 3:
+            self._log(f'Malformed `betting_categories_wrapper`. {betting_categories_wrapper}', 'error')
+            return None
+        moneyline_element: WebElement = betting_categories_wrapper[1]
+        try:
+            return moneyline_element.find_elements(By.XPATH, './button')[team_idx]
+        except Exception as e:
+            self._log(f'Could not find moneyline bet button. Exception: {e}', 'error')
+            return None
 
-    def _get_bet_slip_element_aux(self):
+    def _get_bet_slip_element_aux(self) -> WebElement | None:
         bet_slip_by, bet_slip_value = By.CLASS_NAME, "mod-KambiBC-betslip-container"
         util.simulate.wait_for_element(self.driver, 1, bet_slip_by, bet_slip_value)
         return self.driver.find_element(bet_slip_by, bet_slip_value)
 
-    def _get_wager_input_element_aux(self, bet_slip_element):
+    def _get_wager_input_element_aux(self, bet_slip_element) -> WebElement | None:
         wager_element_by, wager_element_value = By.CLASS_NAME, "mod-KambiBC-stake-input"
         util.simulate.wait_for_element(self.driver, 1, wager_element_by, wager_element_value)
         return self.driver.find_element(wager_element_by, wager_element_value)
 
-    def _get_submit_bet_button_aux(self, bet_slip_element):
+    def _get_submit_bet_button_aux(self, bet_slip_element) -> WebElement | None:
         submit_button_by, submit_button_value = By.CLASS_NAME, "mod-KambiBC-betslip__place-bet-btn"
         util.simulate.wait_for_element(self.driver, 1, submit_button_by, submit_button_value)
         return self.driver.find_element(submit_button_by, submit_button_value)
 
-    def _get_bet_slip_odds_element_aux(self, bet_slip_element):
+    def _get_bet_slip_odds_element_aux(self, bet_slip_element) -> WebElement | None:
         odds_by, odds_value = By.CLASS_NAME, "mod-KambiBC-betslip-outcome__odds"
         util.simulate.wait_for_element(self.driver, 1,  odds_by, odds_value )
         odds = self.driver.find_elements(odds_by, odds_value)
