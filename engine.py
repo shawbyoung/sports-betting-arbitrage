@@ -21,9 +21,10 @@ from draftkings import draftkings
 from hardrock import hardrock
 from fanduel import fanduel
 
-task_res_ty = TypeVar('task_res_generic_ty')
+task_res_ty = TypeVar('task_res_ty')
 task_ty = Callable[[Type[driver]], task_res_ty]
 drivers_list_ty = list[Type[driver]]
+driver_to_task_res_opt_ty = dict[Type[driver], task_res_ty | None]
 
 class engine:
 	events_map_ty = dict[tuple[str,str], event]
@@ -129,7 +130,7 @@ class engine:
 		self.config_sportsbooks(config)
 
 	def _run_on_drivers(self, task: task_ty, drivers: drivers_list_ty):
-		results: dict[Type[driver], task_res_ty | None] = {}
+		results: driver_to_task_res_opt_ty = {}
 		if len(drivers) == 0:
 			logger.log_error('No drivers.')
 			return results
@@ -267,10 +268,7 @@ class engine:
 
 		data_str = tabulate(data, headers="firstrow", tablefmt="plain")
 		logger.log('\n' + data_str)
-		return None
-
-	def _get_odds(d: driver):
-		return d.get_odds()
+		return []
 
 	# TODO: Implement bet hedging in case of bet failure.
 	def execute_bets(self, bet_requests: list[bet_request]) -> bool:
@@ -305,18 +303,22 @@ class engine:
 		return True
 
 	def bet(self):
-		idx = 0
+		get_odds: Callable[[Type[driver]], list[odds]] = lambda d: d.get_odds()
+		arb_identified: int = 0
+		idx: int = 0
 		logger.log('Entering arbitrage monitoring loop.')
+
 		while True:
-			logger.log(f'Loop {idx}.')
-			results = self._run_on_all_drivers(engine._get_odds)
-			odds = []
+			logger.log(f'Loop {idx}. Identified {arb_identified} arbitrage opportunities.')
+			results: driver_to_task_res_opt_ty = self._run_on_all_drivers(get_odds)
+			events_odds: list[odds] = []
 			for driver_odds in results.values():
 				if driver_odds:
-					odds += driver_odds
-			bet_requests = self._find_arbitrage(odds)
+					events_odds += driver_odds
+			bet_requests: list[bet_request] = self._find_arbitrage(events_odds)
 			if bet_requests:
 				self.execute_bets(bet_requests)
+				arb_identified += 1
 			idx += 1
 
 	def epilogue(self):
