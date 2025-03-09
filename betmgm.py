@@ -38,57 +38,69 @@ class betmgm(driver):
 			case _:
 				assert False, f'{util.promotion} undefined in {self.get_name()}'
 
-	def _get_events_aux(self):
-		table_css_selector = 'grid-event-wrapper'
-		WebDriverWait(self.driver, 10).until(
-			EC.presence_of_element_located((By.CLASS_NAME, table_css_selector))
-		)
-		time.sleep(1)
+	def _get_events_aux(self) -> list[WebElement]:
+		_ = self._safe_driver_wait(By.CLASS_NAME, 'grid-event-wrapper', 10)
+		return self._safe_driver_get_all(By.CLASS_NAME, 'grid-event-wrapper')
 
-		events = self.driver.find_elements(By.CLASS_NAME, table_css_selector)
-		return events
-
-	def _strip_event(self, event):
+	def _strip_event(self, event: WebElement) -> tuple:
 		try:
-			participants_wrapper = event.find_element(By.CLASS_NAME, 'grid-info-wrapper').find_elements(By.CLASS_NAME, 'participant')
-			betting_categories_wrapper = event.find_element(By.CLASS_NAME, 'grid-group-container').find_elements(By.CLASS_NAME, 'grid-option-group')
+			participants_wrapper: WebElement = (
+				event.find_element(By.CLASS_NAME, 'grid-info-wrapper')
+					 .find_elements(By.CLASS_NAME, 'participant')
+			)
+			betting_categories_wrapper: WebElement = (
+				event.find_element(By.CLASS_NAME, 'grid-group-container')
+					 .find_elements(By.CLASS_NAME, 'grid-option-group')
+			)
+			return participants_wrapper, betting_categories_wrapper
 		except Exception as e:
 			self._log(f'Event could not be stripped. {e}', 'error')
-			return None
+			return None, None
 
-		return participants_wrapper, betting_categories_wrapper
+	def _participants_parser(self, participants_wrapper) -> list[str]:
+		return [participant_div.text for participant_div in participants_wrapper]
 
 	def _construct_odds(self, participants_wrapper, betting_categories_wrapper) -> odds | None:
-		participants = [participant_div.text for participant_div in participants_wrapper]
-		moneyline = betting_categories_wrapper[2].text.split()
+		participants: list[str] = self._participants_parser(participants_wrapper)
+		moneyline: list[str] = betting_categories_wrapper[2].text.split()
 		return odds.construct_odds(self.get_name(), participants, moneyline)
 
-	def _get_moneyline_bet_button_aux(self, event, team):
+	def _get_moneyline_bet_button_aux(self, event: WebElement, team: str) -> WebElement | None:
 		participants_wrapper, betting_categories_wrapper = self._strip_event(event)
-		participants = [participant_div.text for participant_div in participants_wrapper]
-		team_idx = 0 if team in participants[0] else 1
-		moneyline_element = betting_categories_wrapper[2]
-		return moneyline_element.find_elements(By.CSS_SELECTOR, 'ms-event-pick')[team_idx]
+		if not participants_wrapper or not betting_categories_wrapper:
+			return None
+		participants: list[str] = self._participants_parser(participants_wrapper)
+		if len(participants) != 2 or (team not in participants[0] and team not in participants[1]):
+			self._log(f'Malformed `participants`. {participants}', 'error')
+			return None
+		team_idx: int = 0 if team in participants[0] else 1
+		moneyline_element: WebElement = betting_categories_wrapper[2]
+		try:
+			return moneyline_element.find_elements(By.CSS_SELECTOR, 'ms-event-pick')[team_idx]
+		except Exception as e:
+			self._log(f'Could not find moneyline button. {e}', 'error')
+			return None
 
-	def _get_bet_slip_element_aux(self):
-		bet_slip_by, bet_slip_value = By.CLASS_NAME, "bet-column"
-		util.simulate.wait_for_element(self.driver, 1, bet_slip_by, bet_slip_value)
-		return self.driver.find_element(bet_slip_by, bet_slip_value)
+	def _get_bet_slip_element_aux(self) -> WebElement | None:
+		bet_slip_by: str = By.CLASS_NAME
+		bet_slip_value: str = 'bet-column'
+		return self._safe_driver_wait(bet_slip_by, bet_slip_value, 1)
 
-	def _get_wager_input_element_aux(self, bet_slip_element):
-		wager_element_by, wager_element_value = By.CLASS_NAME, "stake-input-value"
-		util.simulate.wait_for_element(self.driver, 1, wager_element_by, wager_element_value)
-		return self.driver.find_element(wager_element_by, wager_element_value)
+	def _get_wager_input_element_aux(self, bet_slip_element: WebElement) -> WebElement | None:
+		wager_element_by: str = By.CLASS_NAME
+		wager_element_value: str = "stake-input-value"
+		return self._safe_driver_wait(wager_element_by, wager_element_value, 1)
 
-	def _get_submit_bet_button_aux(self, bet_slip_element):
-		submit_button_by, submit_button_value = By.CLASS_NAME, "betslip-place-button"
-		util.simulate.wait_for_element(self.driver, 1, submit_button_by, submit_button_value)
-		return self.driver.find_element(submit_button_by, submit_button_value)
+	def _get_submit_bet_button_aux(self, bet_slip_element) -> WebElement | None:
+		submit_button_by: str = By.CLASS_NAME
+		submit_button_value: str = 'betslip-place-button'
+		return self._safe_driver_wait(submit_button_by, submit_button_value, 1)
 
 	def _get_bet_slip_odds_element_aux(self, bet_slip_element):
-		odds_by, odds_value = By.CLASS_NAME, "betslip-pick-odds__value"
-		util.simulate.wait_for_element(self.driver, 1,  odds_by, odds_value )
-		odds = self.driver.find_elements(odds_by, odds_value)
+		odds_by: str = By.CLASS_NAME
+		odds_value: str = 'betslip-pick-odds__value'
+		self._safe_driver_wait(odds_by, odds_value, 1)
+		odds = self._safe_driver_get_all(odds_by, odds_value)
 		if len(odds) != 1:
 			raise Exception('Number of bet slip odds elements neq 1')
 		return odds[0]
