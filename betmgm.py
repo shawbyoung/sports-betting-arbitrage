@@ -74,6 +74,9 @@ class betmgm(driver):
 			self._log(f'Malformed `participants`. {participants}', 'error')
 			return None
 		team_idx: int = 0 if team in participants[0] else 1
+		if len(betting_categories_wrapper) != 3:
+			self._log(f'Malformed `betting_categories_wrapper`. {betting_categories_wrapper}', 'error')
+			return None
 		moneyline_element: WebElement = betting_categories_wrapper[2]
 		try:
 			return moneyline_element.find_elements(By.CSS_SELECTOR, 'ms-event-pick')[team_idx]
