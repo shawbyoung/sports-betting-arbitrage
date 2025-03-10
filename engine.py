@@ -1,4 +1,5 @@
 import json
+import datetime
 import time
 import os
 import util
@@ -37,7 +38,7 @@ class engine:
 
 	def run(self):
 		self.login()
-		self.bet()
+		self.loop()
 		self.epilogue()
 
 	def initalize_drivers(self):
@@ -202,9 +203,11 @@ class engine:
 		events: engine.events_map_ty = self._find_polarizing_odds(all_odds)
 		bet_amt: float = 100.0
 
-		def log_arb_found(bet_request: list[bet_request]):
-			assert len(bet_request) == 2, 'len(bet requests) neq 2.'
-			f, u = bet_request
+		def log_arb_found(bet_requests: list[bet_request]):
+			assert len(bet_requests) == 2, 'len(bet requests) neq 2.'
+			f, u = bet_requests
+			logger.log(str(f))
+			logger.log(str(u))
 			logger.log(
 				'team\todds\twager\twinnings\tprofit\t'
 			)
@@ -222,20 +225,23 @@ class engine:
 		data = [['t1', 't2', 't1_min', 't2_max', 't1_min_sb', 't2_max_sb', 't2_min', 't1_max', 't2_min_sb', 't1_max_sb']]
 		for (t1_name, t2_name), e in events.items():
 			if util.compute_profit(e.get_t1_min(), e.get_t2_max()) > 1:
+				timestamp: str = str(datetime.datetime.now())
 				bet_requests = [
 					# Favorite.
 					bet_request(
 						e.get_t1_min_sportsbook(),
 						e.get_t1_name(),
 						e.get_t1_min(),
-						util.compute_favorite_wager(bet_amt, e.get_t1_min(), e.get_t2_max)
+						util.compute_favorite_wager(bet_amt, e.get_t1_min(), e.get_t2_max),
+						timestamp
 					),
 					# Underdog.
 					bet_request(
 						e.get_t2_max_sportsbook(),
 						e.get_t2_name(),
 						e.get_t2_max(),
-						util.compute_underdog_wager(bet_amt, e.get_t1_min(), e.get_t2_max)
+						util.compute_underdog_wager(bet_amt, e.get_t1_min(), e.get_t2_max),
+						timestamp
 					)
 				]
 				log_arb_found(bet_requests)
@@ -247,14 +253,16 @@ class engine:
 						e.get_t2_min_sportsbook(),
 						e.get_t2_name(),
 						e.get_t2_min(),
-						util.compute_favorite_wager(bet_amt, e.get_t2_min(), e.get_t1_max)
+						util.compute_favorite_wager(bet_amt, e.get_t2_min(), e.get_t1_max),
+						timestamp
 					),
 					# Underdog.
 					bet_request(
 						e.get_t1_max_sportsbook(),
 						e.get_t1_name(),
 						e.get_t1_max(),
-						util.compute_underdog_wager(bet_amt, e.get_t2_min(), e.get_t1_max)
+						util.compute_underdog_wager(bet_amt, e.get_t2_min(), e.get_t1_max),
+						timestamp
 					)
 				]
 				log_arb_found(bet_requests)
@@ -302,7 +310,7 @@ class engine:
 
 		return True
 
-	def bet(self):
+	def loop(self):
 		get_odds: Callable[[Type[driver]], list[odds]] = lambda d: d.get_odds()
 		arb_identified: int = 0
 		idx: int = 0
@@ -317,8 +325,12 @@ class engine:
 					events_odds += driver_odds
 			bet_requests: list[bet_request] = self._find_arbitrage(events_odds)
 			if bet_requests:
-				self.execute_bets(bet_requests)
+				if self._login_flag == True:
+					logger.log('Executing bet requests.')
+					self.execute_bets(bet_requests)
 				arb_identified += 1
+				logger.log('Arbitrage opportunity executed - examine output asap.') 
+				break
 			idx += 1
 
 	def epilogue(self):
