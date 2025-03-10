@@ -67,7 +67,7 @@ class betrivers(driver):
 
         return participants_wrapper, betting_categories_wrapper
 
-    def _participants_parser(self, participants_wrapper) -> list[str]:
+    def _parse_participants(self, participants_wrapper) -> list[str]:
         participants: list[str] = []
         for participant_div in participants_wrapper:
             participant_str_li: list[str] = participant_div.text.split()[1:]
@@ -78,7 +78,7 @@ class betrivers(driver):
         return participants
 
     def _construct_odds(self, participants_wrapper, betting_categories_wrapper) -> odds | None:
-        participants: list[str] = self._participants_parser(participants_wrapper)
+        participants: list[str] = self._parse_participants(participants_wrapper)
         moneyline: list[str] = betting_categories_wrapper[1].text.split()
         return odds.construct_odds(self._name, participants, moneyline)
 
@@ -86,7 +86,7 @@ class betrivers(driver):
         participants_wrapper, betting_categories_wrapper = self._strip_event(event)
         if not participants_wrapper or not betting_categories_wrapper:
             return None
-        participants: list[str] = self._participants_parser(participants_wrapper)
+        participants: list[str] = self._parse_participants(participants_wrapper)
         if len(participants) != 2 or (team not in participants[0] and team not in participants[1]):
             self._log(f'Malformed `participants`. {participants}', 'error')
             return None
