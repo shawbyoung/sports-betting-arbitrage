@@ -7,9 +7,12 @@ from selenium.webdriver.remote.webelement import WebElement
 
 # TODO: implement state here, in config, and in individual drivers, eventually.
 promotion = None
-# TODO: make these constant, ie return from func instead of mutable var, like promotion.
-chromedriver_path = 'chromedriver/chromedriver.exe'
-max_login_retries = 2
+
+def chromedriver_path():
+    return 'chromedriver/chromedriver.exe'
+
+def max_login_retries():
+    return 2
 
 class american:
     # TODO: implement a function called "is_plus" that returns if the prefix

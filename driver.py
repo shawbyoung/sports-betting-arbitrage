@@ -47,7 +47,7 @@ class driver:
 	def initialize_webdriver(self) -> None:
 		self._log(f'Initializing {self.get_name()} web driver.')
 		self._log(f'Using \'{self._user_data_dir}\' as user_data_dir.')
-		service = Service(executable_path=util.chromedriver_path, service_args=['--log-level=DEBUG'])
+		service = Service(executable_path=util.chromedriver_path(), service_args=['--log-level=DEBUG'])
 		options = Options()
 		options.binary_location = 'chrome/chrome-win64/chrome.exe'
 		options.page_load_strategy = 'eager'
@@ -130,7 +130,7 @@ class driver:
 		if not self._get_password():
 			self._log(f'No password configured.', 'error')
 			return False
-		for idx in range(util.max_login_retries):
+		for idx in range(util.max_login_retries()):
 			self._log(f'Log in attempt {idx}.')
 			try:
 				self._login_aux()
