@@ -1,10 +1,11 @@
 import scipy.stats as stats
 import time
-import logger
+from logger import logger
 import os
 import fnmatch
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.remote.webelement import WebElement
 
 # TODO: implement state here, in config, and in individual drivers, eventually.
 promotion = None
@@ -12,22 +13,13 @@ promotion = None
 chromedriver_path = 'chromedriver/chromedriver.exe'
 max_login_retries = 2
 
-def find(pattern, path):
-    matches = []
-    # Use scandir for efficient directory listing
-    with os.scandir(path) as entries:
-        for entry in entries:
-            # Compare the entry name against the pattern
-            if fnmatch.fnmatch(entry.name, pattern):
-                # Append the full path
-                matches.append(entry.path)
-    return matches
-
 class american:
+    # TODO: implement a function called "is_plus" that returns if the prefix
+    # is in the set of characters that are pluses and the complement for minuses.
     def to_decimal(odds: str) -> float:
-        n: int = int(odds[1:])
+        n: float = float(odds[1:])
         prefix: str = odds[0]
-        return (n + 100)/100 if prefix == '+' else (n + 100)/n
+        return (n + 100.0)/100.0 if prefix == '+' else (n + 100.0)/n
 
 def compute_profit(t1_odds: float, t2_odds: float) -> float:
     return (1.0/((1.0/t1_odds) + (1.0/t2_odds))) - 1
@@ -49,21 +41,41 @@ class simulate:
 
     _type_t_mu, _type_t_sig = 0.15, 0.05
     _type_t_l, _type_t_u = 0, 0.3
-    _type_t = stats.truncnorm((_type_t_l - _type_t_mu) / _type_t_sig, (_type_t_u - _type_t_mu) / _type_t_sig, loc=_type_t_mu, scale=_type_t_sig).rvs(_t_arr_len)
+    _type_t = stats.truncnorm(
+        (_type_t_l - _type_t_mu) / _type_t_sig,
+        (_type_t_u - _type_t_mu) / _type_t_sig,
+        loc=_type_t_mu, scale=_type_t_sig).rvs(_t_arr_len)
     _type_t_idx = 0
 
     _short_t_mu, _short_t_sig = 1.5, 0.25
     _short_t_l, _short_t_u = 0.75, 2.25
-    _short_t = stats.truncnorm((_short_t_l - _short_t_mu) / _short_t_sig, (_short_t_u - _short_t_mu) / _short_t_sig, loc=_short_t_mu, scale=_short_t_sig).rvs(_t_arr_len)
+    _short_t = stats.truncnorm(
+        (_short_t_l - _short_t_mu) / _short_t_sig,
+        (_short_t_u - _short_t_mu) / _short_t_sig,
+        loc=_short_t_mu, scale=_short_t_sig).rvs(_t_arr_len)
     _short_t_idx = 0
 
     _long_t_mu, _long_t_sig = 3.5, 0.5
     _long_t_l, long_t_u = 2.5, 5
-    _long_t = stats.truncnorm((_long_t_l - _long_t_mu) / _long_t_sig, (long_t_u - _long_t_mu) / _long_t_sig, loc=_long_t_mu, scale=_long_t_sig).rvs(_t_arr_len)
+    _long_t = stats.truncnorm(
+        (_long_t_l - _long_t_mu) / _long_t_sig,
+        (long_t_u - _long_t_mu) / _long_t_sig,
+        loc=_long_t_mu, scale=_long_t_sig).rvs(_t_arr_len)
     _long_t_idx = 0
 
     def exact_wait(t):
         time.sleep(t)
+
+    # TODO: [safety] move impl to driver for no circular dependency when we to statically type this?
+    # TODO: for failures at the driver/element level, we should we quit the webdriver and reinitialize it.
+    def safe_click(driver, element: WebElement) -> bool:
+        try:
+            driver.execute_script("arguments[0].scrollIntoView()", element)
+            element.click()
+            return True
+        except Exception as e:
+            logger.log_error(f'Could not click element. Exception: {e}')
+            return False
 
     def force_click(driver, element):
         driver.execute_script("arguments[0].click();", element)
@@ -82,6 +94,7 @@ class simulate:
     def long_wait():
         time.sleep(simulate.long_interaction_time())
 
+    # TODO: [safety] move impl to driver for no circular dependency when we to statically type this?
     def wait_for_element(webdriver, wait_time, by, value):
         WebDriverWait(webdriver, wait_time).until(
 			EC.presence_of_element_located((by, value))
