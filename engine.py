@@ -9,18 +9,22 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Type, TypeVar, Callable
 from tabulate import tabulate
 
-from driver import driver
 from logger import logger
+
 from odds import odds
 from event import event
 from bet_request import bet_request
 
 # Drivers
+from driver import driver
 from betmgm import betmgm
 from betrivers import betrivers
 from draftkings import draftkings
 from hardrock import hardrock
 from fanduel import fanduel
+
+# Import the web display functions
+from web_display import update_odds, start as start_web_display
 
 task_res_ty = TypeVar('task_res_ty')
 task_ty = Callable[[Type[driver]], task_res_ty]
@@ -31,6 +35,8 @@ class engine:
 	events_map_ty = dict[tuple[str,str], event]
 
 	def __init__(self, drivers):
+		# Start the Flask odds display server
+		start_web_display()
 		self.drivers: dict[str, Type[driver]] = drivers
 		self._login_flag: bool = False
 		self.config()
@@ -222,7 +228,8 @@ class engine:
 			)
 
 		logger.log(f'Tracking {len(events)} events.')
-		data = [['t1', 't2', 't1_min', 't2_max', 't1_min_sb', 't2_max_sb', 't2_min', 't1_max', 't2_min_sb', 't1_max_sb']]
+		header = ['t1', 't2', 't1_min', 't2_max', 't1_min_sb', 't2_max_sb', 't2_min', 't1_max', 't2_min_sb', 't1_max_sb']
+		data = []
 		for (t1_name, t2_name), e in events.items():
 			if util.compute_profit(e.get_t1_min(), e.get_t2_max()) > 1:
 				timestamp: str = str(datetime.datetime.now())
@@ -274,8 +281,10 @@ class engine:
 				f'{e.get_t2_min():.2f}', f'{e.get_t1_max():.2f}', e.get_t2_min_sportsbook(), e.get_t1_max_sportsbook()
 			])
 
-		data_str = tabulate(data, headers="firstrow", tablefmt="plain")
-		logger.log('\n' + data_str)
+		data = sorted(data, key=lambda row: (row[0] , row[1]))
+		data.insert(0, header)
+		data_str = tabulate(data, headers="firstrow", tablefmt="html")
+		update_odds(data_str)
 		return []
 
 	# TODO: Implement bet hedging in case of bet failure.

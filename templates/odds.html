@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Odds Display</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #333;
+            padding: 8px;
+            text-align: center;
+            white-space: nowrap;
+        }
+        th {
+            background-color: #eee;
+        }
+        /* Highlight style for changed cells */
+        .highlight {
+            background-color: lightgreen;
+            transition: background-color 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <h1>Odds Display</h1>
+    <div id="oddsDiv">
+        {{ odds_table|safe }}
+    </div>
+    <script>
+        // This function compares the existing table with the newly fetched one.
+        function updateOddsTable(newHtml) {
+            // Create a temporary container to parse the new HTML.
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = newHtml;
+            const newTable = tempDiv.querySelector('table');
+            const oddsDiv = document.getElementById("oddsDiv");
+            let oldTable = oddsDiv.querySelector('table');
+
+            // If no table exists yet, insert the new table outright.
+            if (!oldTable) {
+                oddsDiv.innerHTML = newHtml;
+                return;
+            }
+
+            const oldRows = oldTable.rows;
+            const newRows = newTable.rows;
+
+            // Loop through each row and cell to compare content.
+            for (let i = 0; i < newRows.length; i++) {
+                let newCells = newRows[i].cells;
+                let oldCells = oldRows[i].cells;
+
+                for (let j = 0; j < newCells.length; j++) {
+                    if (oldCells[j].textContent !== newCells[j].textContent) {
+                        // Update the cell content.
+                        oldCells[j].textContent = newCells[j].textContent;
+                        // Add the highlight class.
+                        oldCells[j].classList.add('highlight');
+                        // Remove the highlight after 500ms.
+                        setTimeout(() => {
+                            oldCells[j].classList.remove('highlight');
+                        }, 1000);
+                    }
+                }
+            }
+        }
+
+        // Poll the server every 5 seconds for updated odds.
+        setInterval(function() {
+            fetch("/odds")
+              .then(response => response.text())
+              .then(html => {
+                  updateOddsTable(html);
+              })
+              .catch(error => console.error("Error fetching odds:", error));
+        }, 5000);
+    </script>
+</body>
+</html>
