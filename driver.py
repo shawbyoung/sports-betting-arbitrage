@@ -49,9 +49,13 @@ class driver:
 		self._log(f'Using \'{self._user_data_dir}\' as user_data_dir.')
 		service = Service(executable_path=util.chromedriver_path, service_args=['--log-level=DEBUG'])
 		options = Options()
+		options.binary_location = 'chrome/chrome-win64/chrome.exe'
+		options.page_load_strategy = 'eager'
+		prefs = {"profile.default_content_setting_values.geolocation": 1}
+		options.add_experimental_option("prefs", prefs)
 		user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0"
 		options.add_argument(f"user-agent={user_agent}")
-		options.binary_location = 'chrome/chrome-win64/chrome.exe'
+		options.add_argument('--ignore-certificate-errors')
 		options.add_argument(f'--user-data-dir={self._user_data_dir}')
 		options.add_argument('--start-maximized')
 		options.add_argument('--disable-blink-features')
@@ -199,8 +203,8 @@ class driver:
 		if not self._get_promotion_page():
 			return []
 
-		events = self._get_events()
-		all_odds = []
+		events: list[WebElement] = self._get_events()
+		all_odds: list[odds] = []
 		for event in events:
 			event_odds: odds = self._parse_event(event)
 			if event_odds:
@@ -313,7 +317,7 @@ class driver:
 		if not button:
 			self._log(f'Couldn\'t get moneyline bet button. Could be inactive', 'error')
 			return False
-		if not util.simulate.safe_click(button):
+		if not util.simulate.safe_click(self.driver, button):
 			return False
 
 		# TODO: more meaningful disambiguation with multiple bets on slip for
@@ -363,7 +367,7 @@ class driver:
 				raise Exception(f'Odds string formatted incorrectly. {bs_odds}')
 			if util.american.to_decimal(bs_odds) != br.get_odds():
 				raise Exception(f'Bet slip odds ({util.american.to_decimal(bs_odds)}={bs_odds}) neq bet request odds ({br.get_odds()})')
-			return util.simulate.safe_click(bs.get_submit_button())
+			return util.simulate.safe_click(self.driver, bs.get_submit_button())
 		except Exception as e:
 			logger.log_error(str(e))
 			return False
