@@ -8,11 +8,16 @@ from selenium.webdriver.remote.webelement import WebElement
 # TODO: implement state here, in config, and in individual drivers, eventually.
 promotion = None
 
+# Constants.
+
 def chromedriver_path():
     return 'chromedriver/chromedriver.exe'
 
 def max_login_retries():
     return 2
+
+def post_login_timeout():
+    return 30
 
 class american:
     # TODO: implement a function called "is_plus" that returns if the prefix

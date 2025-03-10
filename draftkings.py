@@ -20,7 +20,7 @@ class draftkings(driver):
 			util.simulate.click_short_wait(submit_button)
 		else:
 			self._login_form_entry(username_input, password_input, submit_button)
-		util.simulate.exact_wait(10)
+		util.simulate.exact_wait(util.post_login_timeout())
 
 	def _get_promotion_link(self) -> str:
 		match util.promotion:
@@ -38,7 +38,7 @@ class draftkings(driver):
 		events = []
 		for table in sportsbook_tables:
 			table_rows = table.find_elements(By.CSS_SELECTOR, 'tr')
-			for i in range(1, len(table_rows)-2, 2):
+			for i in range(0, len(table_rows)-2, 2):
 				events.append([table_rows[i], table_rows[i+1]])
 
 		return events
@@ -57,7 +57,7 @@ class draftkings(driver):
 			return None, None
 
 	def _parse_participants(self, participants_wrapper) -> list[str]:
-		return [participant.text for participant in participants_wrapper]
+		return [' '.join(participant.text.split()[1:]) for participant in participants_wrapper]
 
 	def _parse_moneyline(self, betting_categories_wrapper) -> list[str]:
 		try:

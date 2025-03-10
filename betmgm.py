@@ -29,7 +29,7 @@ class betmgm(driver):
 			util.simulate.click_short_wait(submit_button)
 		else:
 			self._login_form_entry(username_input, password_input, submit_button)
-		util.simulate.exact_wait(5)
+		util.simulate.exact_wait(util.post_login_timeout())
 
 	def _get_promotion_link(self) -> str:
 		match util.promotion:

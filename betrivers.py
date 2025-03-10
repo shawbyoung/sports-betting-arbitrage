@@ -38,7 +38,7 @@ class betrivers(driver):
         else:
             self._log('Entering information into login form.')
             self._login_form_entry(username_input, password_input, submit_button)
-        util.simulate.exact_wait(5)
+        util.simulate.exact_wait(util.post_login_timeout())
 
     def _get_promotion_link(self) -> str:
         match util.promotion:
@@ -49,6 +49,7 @@ class betrivers(driver):
 
     def _get_events_aux(self) -> list[WebElement]:
         # TODO: lowkey this selector is so ugly surely there's a better way to do this.
+        # TODO: impl click show more button if it exists.
         table_css_selector = 'div[data-testid=\'listview-group-1000093652-events-container\''
         events_parent_div = self._safe_driver_wait(By.CSS_SELECTOR, table_css_selector, 10)
         if events_parent_div is None:
