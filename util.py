@@ -1,8 +1,6 @@
 import scipy.stats as stats
 import time
 from logger import logger
-import os
-import fnmatch
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.remote.webelement import WebElement
