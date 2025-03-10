@@ -39,7 +39,8 @@ class betmgm(driver):
 				assert False, f'{util.promotion} undefined in {self.get_name()}'
 
 	def _get_events_aux(self) -> list[WebElement]:
-		_ = self._safe_driver_wait(By.CLASS_NAME, 'grid-event-wrapper', 10)
+		if not self._safe_driver_wait(By.CLASS_NAME, 'grid-event-wrapper', 10):
+			return []
 		return self._safe_driver_get_all(By.CLASS_NAME, 'grid-event-wrapper')
 
 	def _strip_event(self, event: WebElement) -> tuple:
@@ -57,11 +58,11 @@ class betmgm(driver):
 			self._log(f'Event could not be stripped. {e}', 'error')
 			return None, None
 
-	def _participants_parser(self, participants_wrapper) -> list[str]:
+	def _parse_participants(self, participants_wrapper) -> list[str]:
 		return [participant_div.text for participant_div in participants_wrapper]
 
 	def _construct_odds(self, participants_wrapper, betting_categories_wrapper) -> odds | None:
-		participants: list[str] = self._participants_parser(participants_wrapper)
+		participants: list[str] = self._parse_participants(participants_wrapper)
 		moneyline: list[str] = betting_categories_wrapper[2].text.split()
 		# TODO: sometimes - when odds changes - moneyline isn't necessarily len 2, but len 3 or 4
 		# where extra divs are the new odds that are about to be displayed. Fix to handle this case.
@@ -71,7 +72,7 @@ class betmgm(driver):
 		participants_wrapper, betting_categories_wrapper = self._strip_event(event)
 		if not participants_wrapper or not betting_categories_wrapper:
 			return None
-		participants: list[str] = self._participants_parser(participants_wrapper)
+		participants: list[str] = self._parse_participants(participants_wrapper)
 		if len(participants) != 2 or (team not in participants[0] and team not in participants[1]):
 			self._log(f'Malformed `participants`. {participants}', 'error')
 			return None
