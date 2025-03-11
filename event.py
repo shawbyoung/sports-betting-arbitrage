@@ -4,8 +4,9 @@ import util
 Represents the most polarizing odds for an event.
 Implemented with eventual thread safety in mind for updating odds.
 '''
-# TODO: impl __slots__.
 class team:
+    __slots__ = ['_name', '_max', '_sportsbook']
+
     def __init__(self, name: str, max: float, sportsbook: str):
         self._name: str = name
         self._max: float = max
@@ -31,6 +32,8 @@ class team:
         return self._sportsbook
 
 class event:
+    __slots__ = ['_t1', '_t2', '_profit']
+
     # TODO: make threadsafe.
     def __init__(self, t1_name: str, t1_max: float, t1_sportsbook: str,
                        t2_name: str, t2_max: float, t2_sportsbook: str):
