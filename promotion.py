@@ -31,7 +31,7 @@ task_ty = Callable[[Type[driver]], task_res_ty]
 drivers_list_ty = list[Type[driver]]
 driver_to_task_res_opt_ty = dict[Type[driver], task_res_ty | None]
 
-class engine:
+class promotion:
 	events_map_ty = dict[tuple[str,str], event]
 
 	def __init__(self, drivers):
@@ -167,13 +167,13 @@ class engine:
 			return
 
 		logger.log('Logging into sportsbooks.')
-		login_success = self._run_on_all_drivers(engine._login)
+		login_success = self._run_on_all_drivers(promotion._login)
 		dead_sportsbooks = [sportbook.get_name() for sportbook, success in login_success.items() if success == False]
 		for dead_sportsbook in dead_sportsbooks:
 			self.drop_sportsbook(dead_sportsbook)
 
 	def	_find_polarizing_odds(self, all_odds: list[odds]):
-		events: engine.events_map_ty = {}
+		events: promotion.events_map_ty = {}
 		for sb_odds in all_odds:
 			e: event | None = events.get((sb_odds.get_t1_name(), sb_odds.get_t2_name()), None)
 			if not e:
@@ -196,7 +196,7 @@ class engine:
 		return events
 
 	def _find_arbitrage(self, all_odds: list[odds]) -> list[bet_request]:
-		events: engine.events_map_ty = self._find_polarizing_odds(all_odds)
+		events: promotion.events_map_ty = self._find_polarizing_odds(all_odds)
 		bet_amt: float = 100.0
 
 		def log_arb_found(bet_requests: list[bet_request]):
@@ -221,7 +221,6 @@ class engine:
 		bet_requests: list[bet_request] = []
 		for (t1_name, t2_name), e in events.items():
 			possible_profit: float = util.compute_profit(e.get_t1_max(), e.get_t2_max())
-
 			data.append([
 				t1_name, t2_name, f'{e.get_t1_max():.2f}', f'{e.get_t2_max():.2f}',
 				e.get_t1_sportsbook(), e.get_t2_sportsbook(), f'{possible_profit:.2f}'

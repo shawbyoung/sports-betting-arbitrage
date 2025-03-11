@@ -1,4 +1,4 @@
-from engine import engine
+from promotion import promotion
 
 # Drivers
 from betmgm import betmgm
@@ -13,8 +13,8 @@ def main():
         'draftkings' : draftkings(),
         'betrivers' : betrivers()
     }
-    e = engine(drivers)
-    e.run()
+    p = promotion(drivers)
+    p.run()
 
 if __name__ == '__main__':
     main()
