@@ -1,30 +1,14 @@
 import json
-import datetime
-import time
-import os
 import util
 
-from typing import Type, TypeVar, Callable
-from tabulate import tabulate
-
-from logger import logger
+from typing import Type, Callable
 
 from arbitrage_engine import arbitrage_engine
+from driver import driver, drivers
+from logger import logger
 from odds import odds
 from perform_arbitrage_arr import perform_arbitrage_err
-from event import event, team
-from bet_request import bet_request
-
-# Drivers
-from driver import driver, drivers
-from betmgm import betmgm
-from betrivers import betrivers
-from draftkings import draftkings
-from hardrock import hardrock
-from fanduel import fanduel
-
-# Import the web display functions
-from web_display import update_odds, start as start_web_display
+from web_display import start as start_web_display
 
 class promotion:
 	def __init__(self, drivers):
