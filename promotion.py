@@ -11,6 +11,7 @@ from logger import logger
 
 from arbitrage_engine import arbitrage_engine
 from odds import odds
+from perform_arbitrage_arr import perform_arbitrage_err
 from event import event, team
 from bet_request import bet_request
 
@@ -135,7 +136,7 @@ class promotion:
 			for driver_odds in results.values():
 				if driver_odds:
 					events_odds.extend(driver_odds)
-			err = self._arbitrage_engine.perform_arbitrage(events_odds)
+			err: perform_arbitrage_err = self._arbitrage_engine.perform_arbitrage(events_odds)
 			if err.arb_identified():
 				logger.log('Arbitrage opportunity identified.')
 				arb_identified += 1
