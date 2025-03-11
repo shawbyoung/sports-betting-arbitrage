@@ -1,4 +1,5 @@
 
+import util
 '''
 Represents the most polarizing odds for an event.
 Implemented with eventual thread safety in mind for updating odds.
@@ -35,6 +36,8 @@ class event:
                        t2_name: str, t2_max: float, t2_sportsbook: str):
         self._t1: team = team(t1_name, t1_max, t1_sportsbook)
         self._t2: team = team(t2_name, t2_max, t2_sportsbook)
+        self._profit: float | None = None
+        self._update_profit()
 
     # Team 1 getters/setters.
     def get_t1(self) -> team:
@@ -66,8 +69,17 @@ class event:
     def update_t1(self, t1_max: float, t1_sportsbook: str):
         self._t1.set_max(t1_max)
         self._t1.set_sportsbook(t1_sportsbook)
+        self._update_profit()
 
     # Team 2 updates.
     def update_t2(self, t2_max: float, t2_sportsbook: str):
         self._t2.set_max(t2_max)
         self._t2.set_sportsbook(t2_sportsbook)
+        self._update_profit()
+
+    # Profit functions.
+    def get_profit(self) -> float | None:
+        return self._profit
+
+    def _update_profit(self) -> None:
+        self._profit = util.compute_profit(self._t1.get_max(), self._t2.get_max())
