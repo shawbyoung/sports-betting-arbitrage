@@ -4,7 +4,7 @@ import util
 Represents the most polarizing odds for an event.
 Implemented with eventual thread safety in mind for updating odds.
 '''
-
+# TODO: impl __slots__.
 class team:
     def __init__(self, name: str, max: float, sportsbook: str):
         self._name: str = name
