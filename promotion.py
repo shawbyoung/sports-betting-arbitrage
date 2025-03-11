@@ -157,17 +157,14 @@ class promotion:
 	def _run_on_all_drivers(self, task: task_ty):
 		return self._run_on_drivers(task, self.drivers.values())
 
-	# TODO: remove all tasks private methods and replace with lambdas.
-	def _login(d: driver):
-		return d.login()
-
 	def login(self):
 		if self._login_flag == False:
 			logger.log('Login flag set to false. Not initiating logins.')
 			return
 
 		logger.log('Logging into sportsbooks.')
-		login_success = self._run_on_all_drivers(promotion._login)
+		login: Callable[[Type[driver]], bool] = lambda d: d.login()
+		login_success = self._run_on_all_drivers(login)
 		dead_sportsbooks = [sportbook.get_name() for sportbook, success in login_success.items() if success == False]
 		for dead_sportsbook in dead_sportsbooks:
 			self.drop_sportsbook(dead_sportsbook)
