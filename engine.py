@@ -12,7 +12,7 @@ from tabulate import tabulate
 from logger import logger
 
 from odds import odds
-from event import event
+from event import event, team
 from bet_request import bet_request
 
 # Drivers
@@ -179,29 +179,19 @@ class engine:
 			if not e:
 				events[sb_odds.get_t1_name(), sb_odds.get_t2_name()] = event(
 					sb_odds.get_t1_name(),
+					sb_odds.get_t1_odds(),
+					sb_odds.get_sportsbook(),
 					sb_odds.get_t2_name(),
-					sb_odds.get_t1_odds(),
-					sb_odds.get_sportsbook(),
-					sb_odds.get_t1_odds(),
-					sb_odds.get_sportsbook(),
-					sb_odds.get_t2_odds(),
-					sb_odds.get_sportsbook(),
 					sb_odds.get_t2_odds(),
 					sb_odds.get_sportsbook(),
 				)
 				continue
 
-			if sb_odds.get_t1_odds() < e.get_t1_min():
-				e.update_t1_min(sb_odds.get_t1_odds(), sb_odds.get_sportsbook())
-
 			if sb_odds.get_t1_odds() > e.get_t1_max():
-				e.update_t1_max(sb_odds.get_t1_odds(), sb_odds.get_sportsbook())
-
-			if sb_odds.get_t2_odds() < e.get_t2_min():
-				e.update_t2_min(sb_odds.get_t2_odds(), sb_odds.get_sportsbook())
+				e.update_t1(sb_odds.get_t1_odds(), sb_odds.get_sportsbook())
 
 			if sb_odds.get_t2_odds() > e.get_t2_max():
-				e.update_t2_max(sb_odds.get_t2_odds(), sb_odds.get_sportsbook())
+				e.update_t2(sb_odds.get_t2_odds(), sb_odds.get_sportsbook())
 
 		return events
 
@@ -214,78 +204,61 @@ class engine:
 			f, u = bet_requests
 			logger.log(str(f))
 			logger.log(str(u))
-			logger.log(
-				'team\todds\twager\twinnings\tprofit\t'
-			)
 			f_winnings, f_profit = f.get_wager() * f.get_odds(), f.get_wager() * f.get_odds() - u.get_wager() - f.get_wager()
 			u_winnings, u_profit = u.get_wager() * u.get_odds(), u.get_wager() * u.get_odds() - u.get_wager() - f.get_wager()
 			u_winnings = u.get_wager() * u.get_odds() - u.get_wager()
+			table = [['Team', 'Odds', 'Wager', 'Winnings', 'Profit'],
+					 [f.get_team(), f.get_odds(), f.get_wager(), f_winnings, f_profit],
+					 [u.get_team(), u.get_odds(), u.get_wager(), u_winnings, u_profit]]
 			logger.log(
-				f'{f.get_team()}\t{f.get_odds():.2f}\t{f.get_wager()}\t{f_winnings}\t{f_profit}'
-			)
-			logger.log(
-				f'{u.get_team()}\t{u.get_odds():.2f}\t{u.get_wager()}\t{u_winnings}\t{u_profit}'
+				tabulate(table, headers="firstrow", tablefmt="plain")
 			)
 
 		logger.log(f'Tracking {len(events)} events.')
-		header = ['t1', 't2', 't1_min', 't2_max', 't1_min_sb', 't2_max_sb', 't2_min', 't1_max', 't2_min_sb', 't1_max_sb']
+		header = ['T1', 'T2', 'T2 Max', 'T2 Max', 'T1 SB', 'T2 SB', 'Possible Profit']
 		data = []
+		most_possible_profit: float | None = None
+		bet_requests: list[bet_request] = []
 		for (t1_name, t2_name), e in events.items():
-			if util.compute_profit(e.get_t1_min(), e.get_t2_max()) > 1:
-				timestamp: str = str(datetime.datetime.now())
-				bet_requests = [
-					# Favorite.
-					bet_request(
-						e.get_t1_min_sportsbook(),
-						e.get_t1_name(),
-						e.get_t1_min(),
-						util.compute_favorite_wager(bet_amt, e.get_t1_min(), e.get_t2_max),
-						timestamp
-					),
-					# Underdog.
-					bet_request(
-						e.get_t2_max_sportsbook(),
-						e.get_t2_name(),
-						e.get_t2_max(),
-						util.compute_underdog_wager(bet_amt, e.get_t1_min(), e.get_t2_max),
-						timestamp
-					)
-				]
-				log_arb_found(bet_requests)
-				return bet_requests
-			if util.compute_profit(e.get_t1_max(), e.get_t2_min()) > 1:
-				bet_requests = [
-					# Favorite.
-					bet_request(
-						e.get_t2_min_sportsbook(),
-						e.get_t2_name(),
-						e.get_t2_min(),
-						util.compute_favorite_wager(bet_amt, e.get_t2_min(), e.get_t1_max),
-						timestamp
-					),
-					# Underdog.
-					bet_request(
-						e.get_t1_max_sportsbook(),
-						e.get_t1_name(),
-						e.get_t1_max(),
-						util.compute_underdog_wager(bet_amt, e.get_t2_min(), e.get_t1_max),
-						timestamp
-					)
-				]
-				log_arb_found(bet_requests)
-				return bet_requests
+			possible_profit: float = util.compute_profit(e.get_t1_max(), e.get_t2_max())
 
 			data.append([
-				t1_name, t2_name,
-				f'{e.get_t1_min():.2f}', f'{e.get_t2_max():.2f}', e.get_t1_min_sportsbook(), e.get_t2_max_sportsbook(),
-				f'{e.get_t2_min():.2f}', f'{e.get_t1_max():.2f}', e.get_t2_min_sportsbook(), e.get_t1_max_sportsbook()
+				t1_name, t2_name, f'{e.get_t1_max():.2f}', f'{e.get_t2_max():.2f}',
+				e.get_t1_sportsbook(), e.get_t2_sportsbook(), f'{possible_profit:.2f}'
 			])
+
+			if possible_profit > 0:
+				if most_possible_profit == None or possible_profit > most_possible_profit:
+					continue
+				timestamp: str = str(datetime.datetime.now())
+				favorite: team = e.get_t2() if e.get_t1_max() > e.get_t2_max() else e.get_t1()
+				underdog: team = e.get_t1() if e.get_t1_max() > e.get_t2_max() else e.get_t2()
+
+				bet_requests = [
+					# Favorite.
+					bet_request(
+						favorite.get_sportsbook(),
+						favorite.get_name(),
+						favorite.get_max(),
+						util.compute_favorite_wager(bet_amt, favorite.get_max(), underdog.get_max()),
+						timestamp
+					),
+					# Underdog.
+					bet_request(
+						underdog.get_sportsbook(),
+						underdog.get_name(),
+						underdog.get_max(),
+						util.compute_underdog_wager(bet_amt, favorite.get_max(), underdog.get_max()),
+						timestamp
+					)
+				]
+				log_arb_found(bet_requests)
 
 		data = sorted(data, key=lambda row: (row[0] , row[1]))
 		data.insert(0, header)
 		data_str = tabulate(data, headers="firstrow", tablefmt="html")
 		update_odds(data_str)
-		return []
+		return bet_requests
 
 	# TODO: Implement bet hedging in case of bet failure.
 	def execute_bets(self, bet_requests: list[bet_request]) -> bool:
@@ -337,9 +310,8 @@ class engine:
 				if self._login_flag == True:
 					logger.log('Executing bet requests.')
 					self.execute_bets(bet_requests)
+					logger.log('Arbitrage opportunity executed - examine output asap.')
 				arb_identified += 1
-				logger.log('Arbitrage opportunity executed - examine output asap.') 
-				break
 			idx += 1
 
 	def epilogue(self):

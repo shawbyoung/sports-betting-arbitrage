@@ -3,92 +3,71 @@
 Represents the most polarizing odds for an event.
 Implemented with eventual thread safety in mind for updating odds.
 '''
+
+class team:
+    def __init__(self, name: str, max: float, sportsbook: str):
+        self._name: str = name
+        self._max: float = max
+        self._sportsbook: str = sportsbook
+
+    # Setters/getters.
+    def set_max(self, max: float):
+        self._max = max
+
+    def get_name(self) -> str:
+        return self._name
+
+    def set_max(self, max: float):
+        self._max = max
+
+    def get_max(self) -> float:
+        return self._max
+
+    def set_sportsbook(self, sportsbook: str):
+        self._sportsbook = sportsbook
+
+    def get_sportsbook(self) -> str:
+        return self._sportsbook
+
 class event:
     # TODO: make threadsafe.
-    def __init__(self, t1_name: str, t2_name: str, 
-                t1_min: float, t1_min_sportsbook: str, t1_max: float, t1_max_sportsbook: str,
-                t2_min: float, t2_min_sportsbook: str, t2_max: float, t2_max_sportsbook: str):
-        self._t1_name: str = t1_name
-        self._t2_name: str = t2_name
-        self._t1_min: float = t1_min
-        self._t1_min_sportsbook: str = t1_min_sportsbook
-        self._t1_max: float = t1_max
-        self._t1_max_sportsbook: str = t1_max_sportsbook
-        self._t2_min: float = t2_min
-        self._t2_min_sportsbook: str = t2_min_sportsbook
-        self._t2_max: float = t2_max
-        self._t2_max_sportsbook: str = t2_max_sportsbook
+    def __init__(self, t1_name: str, t1_max: float, t1_sportsbook: str,
+                       t2_name: str, t2_max: float, t2_sportsbook: str):
+        self._t1: team = team(t1_name, t1_max, t1_sportsbook)
+        self._t2: team = team(t2_name, t2_max, t2_sportsbook)
 
     # Team 1 getters/setters.
+    def get_t1(self) -> team:
+        return self._t1
+
     def get_t1_name(self) -> str:
-        return self._t1_name
-
-    def get_t1_min(self) -> float:
-        return self._t1_min
-
-    def _set_t1_min(self, t1_min: float):
-        self._t1_min = t1_min
+        return self._t1.get_name()
 
     def get_t1_max(self) -> float:
-        return self._t1_max
+        return self._t1.get_max()
 
-    def _set_t1_max(self, t1_max: float):
-        self._t1_max = t1_max
-
-    def get_t1_min_sportsbook(self):
-        return self._t1_min_sportsbook
-
-    def _set_t1_min_sportsbook(self, t1_min_sportsbook: str):
-        self._t1_min_sportsbook = t1_min_sportsbook
-
-    def get_t1_max_sportsbook(self):
-        return self._t1_max_sportsbook
-
-    def _set_t1_max_sportsbook(self, t1_max_sportsbook: str):
-        self._t1_max_sportsbook = t1_max_sportsbook
+    def get_t1_sportsbook(self) -> str:
+        return self._t1.get_sportsbook()
 
     # Team 2 getters/setters.
+    def get_t2(self) -> team:
+        return self._t2
+
     def get_t2_name(self) -> str:
-        return self._t2_name
-
-    def get_t2_min(self) -> float:
-        return self._t2_min
-
-    def _set_t2_min(self, t2_min: float):
-        self._t2_min = t2_min
+        return self._t2.get_name()
 
     def get_t2_max(self) -> float:
-        return self._t2_max
+        return self._t2.get_max()
 
-    def _set_t2_max(self, t2_max: float):
-        self._t2_max = t2_max
-
-    def get_t2_min_sportsbook(self):
-        return self._t2_min_sportsbook
-
-    def _set_t2_min_sportsbook(self, t2_min_sportsbook: str):
-        self._t2_min_sportsbook = t2_min_sportsbook
-
-    def get_t2_max_sportsbook(self):
-        return self._t2_max_sportsbook
-
-    def _set_t2_max_sportsbook(self, t2_max_sportsbook: str):
-        self._t2_max_sportsbook = t2_max_sportsbook
+    def get_t2_sportsbook(self) -> str:
+        return self._t2.get_sportsbook()
 
     # Team 1 updates.
-    def update_t1_min(self, t1_min: float, t1_min_sportsbook: str):
-        self._set_t1_min(t1_min)
-        self._set_t1_min_sportsbook(t1_min_sportsbook)
-
-    def update_t1_max(self, t1_max: float, t1_max_sportsbook: str):
-        self._set_t1_max(t1_max)
-        self._set_t1_max_sportsbook(t1_max_sportsbook)
+    def update_t1(self, t1_max: float, t1_sportsbook: str):
+        self._t1.set_max(t1_max)
+        self._t1.set_sportsbook(t1_sportsbook)
 
     # Team 2 updates.
-    def update_t2_min(self, t2_min: float, t2_min_sportsbook: str):
-        self._set_t2_min(t2_min)
-        self._set_t2_min_sportsbook(t2_min_sportsbook)
-
-    def update_t2_max(self, t2_max: float, t2_max_sportsbook: str):
-        self._set_t2_max(t2_max)
-        self._set_t2_max_sportsbook(t2_max_sportsbook)
+    def update_t2(self, t2_max: float, t2_sportsbook: str):
+        self._t2.set_max(t2_max)
+        self._t2.set_sportsbook(t2_sportsbook)
