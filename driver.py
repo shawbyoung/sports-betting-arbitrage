@@ -1,7 +1,7 @@
 import time
 import util
 
-from itertools import chain
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
@@ -9,8 +9,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.remote.webelement import WebElement
-
-from typing import Callable, TypeVar
+from typing import Callable, Type, TypeVar
 
 from logger import logger
 from odds import odds
@@ -357,7 +356,7 @@ class driver:
 				submit_bet_button))
 		return True
 
-	def execute_bet(self) -> bool:
+	def execute_bet(self, mock: bool) -> bool:
 		br: bet_request = self.get_active_bet_request()
 		bs: bet_slip = self.get_active_bet_slip()
 		try:
@@ -367,7 +366,34 @@ class driver:
 				raise Exception(f'Odds string formatted incorrectly. {bs_odds}')
 			if util.american.to_decimal(bs_odds) != br.get_odds():
 				raise Exception(f'Bet slip odds ({util.american.to_decimal(bs_odds)}={bs_odds}) neq bet request odds ({br.get_odds()})')
+			if mock:
+				return True
 			return util.simulate.safe_click(self.driver, bs.get_submit_button())
 		except Exception as e:
 			logger.log_error(str(e))
 			return False
+
+task_res_ty = TypeVar('task_res_ty')
+driver_to_task_res_opt_ty = dict[Type[driver], task_res_ty | None]
+task_ty = Callable[[Type[driver]], task_res_ty]
+
+class drivers:
+	stringmap = dict[str, Type[driver]]
+
+	def run_on_drivers(task: task_ty, drivers: list[driver]):
+		results: driver_to_task_res_opt_ty = {}
+		if len(drivers) == 0:
+			logger.log_error('No drivers.')
+			return results
+
+		with ThreadPoolExecutor(max_workers=len(drivers)) as executor:
+			future_to_driver = {executor.submit(task, d): d for d in drivers}
+			for future in as_completed(future_to_driver):
+				driver_obj: driver = future_to_driver[future]
+				try:
+					results[driver_obj] = future.result()
+				except Exception as e:
+					logger.log_error(f"Error with driver {driver_obj}: {e}")
+					results[driver_obj] = None
+
+		return results
