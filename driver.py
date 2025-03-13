@@ -299,7 +299,7 @@ class driver:
 	def _get_bet_slip_odds_element_aux(self, bet_slip_element: WebElement) -> WebElement | None:
 		return None
 
-	def prepare_bet(self) -> bool:
+	def prepare_bet(self, mock: bool) -> bool:
 		br: bet_request | None = self.get_active_bet_request()
 		if not br:
 			self._log('No active bet request.', 'error')
@@ -316,8 +316,9 @@ class driver:
 		if not button:
 			self._log(f'Couldn\'t get moneyline bet button. Could be inactive', 'error')
 			return False
-		if not util.simulate.safe_click(self.driver, button):
-			return False
+		if not mock:
+			if not util.simulate.safe_click(self.driver, button):
+				return False
 
 		# TODO: more meaningful disambiguation with multiple bets on slip for
 		# `_get_wager_input` and `_get_bet_slip_odds_element`.
@@ -336,9 +337,10 @@ class driver:
 		if not wager_input_element:
 			return False
 
-		if not util.simulate.clear_and_type_in_field(wager_input_element, str(br.get_wager())):
-			self._log(f'Failed to enter wager amount in input.')
-			return False
+		if not mock:
+			if not util.simulate.clear_and_type_in_field(wager_input_element, str(br.get_wager())):
+				self._log(f'Failed to enter wager amount in input.')
+				return False
 
 		active_bet_bet_slip_odds_element: WebElement = self._get_bet_slip_odds_element(bet_slip_element)
 		if not active_bet_bet_slip_odds_element:

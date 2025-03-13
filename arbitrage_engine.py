@@ -39,13 +39,13 @@ class arbitrage_engine:
 	def _get_drivers(self) -> list[driver]:
 		return self._drivers.values()
 
-	def drop_sportsbook(self, sportsbook):
-		if sportsbook not in self.drivers:
+	def drop_sportsbook(self, sportsbook: str):
+		if sportsbook not in self._drivers:
 			logger.log(f'{sportsbook} not in drivers, unable to drop.')
 			return
 
-		self.drivers[sportsbook].driver_quit()
-		del self.drivers[sportsbook]
+		self._drivers[sportsbook].driver_quit()
+		del self._drivers[sportsbook]
 		logger.log(f'Dropping sportbook {sportsbook}')
 
 	def login(self):
@@ -87,25 +87,9 @@ class arbitrage_engine:
 		events: event_table = self._find_polarizing_odds(all_odds)
 		bet_amt: float = 100.0
 
-		def log_arb_found(bet_requests: list[bet_request]):
-			assert len(bet_requests) == 2, 'len(bet requests) neq 2.'
-			f, u = bet_requests
-			logger.log(str(f))
-			logger.log(str(u))
-			f_winnings, f_profit = f.get_wager() * f.get_odds(), f.get_wager() * f.get_odds() - u.get_wager() - f.get_wager()
-			u_winnings, u_profit = u.get_wager() * u.get_odds(), u.get_wager() * u.get_odds() - u.get_wager() - f.get_wager()
-			u_winnings = u.get_wager() * u.get_odds() - u.get_wager()
-			table = [['Team', 'Odds', 'Wager', 'Winnings', 'Profit'],
-					 [f.get_team(), f.get_odds(), f.get_wager(), f_winnings, f_profit],
-					 [u.get_team(), u.get_odds(), u.get_wager(), u_winnings, u_profit]]
-			logger.log(
-				tabulate(table, headers="firstrow", tablefmt="plain")
-			)
-
 		logger.log(f'Tracking {len(events)} events.')
 		header = ['T1', 'T2', 'T2 Max', 'T2 Max', 'T1 SB', 'T2 SB', 'Possible Profit']
 		data = []
-		most_possible_profit: float | None = None
 		bet_requests: list[bet_request] = []
 		for (t1_name, t2_name), e in events.items():
 			possible_profit: float = util.compute_profit(e.get_t1_max(), e.get_t2_max())
@@ -114,7 +98,7 @@ class arbitrage_engine:
 				e.get_t1_sportsbook(), e.get_t2_sportsbook(), f'{possible_profit:.2f}'
 			])
 
-			if possible_profit > 0:
+			if 8 < possible_profit < 18:
 				timestamp: str = str(datetime.datetime.now())
 				favorite: team = e.get_t2() if e.get_t1_max() > e.get_t2_max() else e.get_t1()
 				underdog: team = e.get_t1() if e.get_t1_max() > e.get_t2_max() else e.get_t2()
@@ -137,7 +121,11 @@ class arbitrage_engine:
 						timestamp
 					)
 				])
-				log_arb_found(bet_requests)
+
+		if bet_requests:
+			logger.log('Bet requests:')
+			for br in bet_requests:
+				logger.log(str(br))
 
 		data = sorted(data, key=lambda row: (row[0] , row[1]))
 		data.insert(0, header)
@@ -149,8 +137,9 @@ class arbitrage_engine:
 	def execute_bets(self, bet_requests: list[bet_request]) -> bool:
 		# Assign bet requests to drivers.
 		loose_drivers: list[driver] = []
-		prepare_bet: Callable[[Type[driver]], bool] = lambda d: d.prepare_bet()
-		execute_bet: Callable[[Type[driver]], bool] = lambda d: d.execute_bet((not self.login_flag()) | self.mock_flag())
+		mock: bool = (not self.login_flag()) | self.mock_flag()
+		prepare_bet: Callable[[Type[driver]], bool] = lambda d: d.prepare_bet(mock)
+		execute_bet: Callable[[Type[driver]], bool] = lambda d: d.execute_bet(mock)
 		def clear_active_bet_requests():
 			for d in loose_drivers:
 				d.set_active_bet_request(None)
@@ -161,7 +150,7 @@ class arbitrage_engine:
 				logger.log_error(f'Invalid bet request. {sportsbook} not in drivers.')
 				clear_active_bet_requests()
 				return False
-			d: str = self.drivers[sportsbook]
+			d: str = self._drivers[sportsbook]
 			d.set_active_bet_request(bet_request)
 			loose_drivers.append(d)
 

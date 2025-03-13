@@ -120,12 +120,7 @@ class promotion:
 			for driver_odds in results.values():
 				if driver_odds:
 					events_odds.extend(driver_odds)
-			err: perform_arbitrage_err = self._arbitrage_engine.perform_arbitrage(events_odds)
-			if err.arb_identified():
-				logger.log('Arbitrage opportunity identified.')
-				arb_identified += 1
-			if err.executed():
-				logger.log('Arbitrage opportunity executed - examine output ASAP.')
+			_ = self._arbitrage_engine.identify_arbitrage(events_odds)
 			idx += 1
 
 	def epilogue(self):
